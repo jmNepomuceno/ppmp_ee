@@ -34,14 +34,14 @@
             <div class="credential-icon-div">
                 <i class="fa-solid fa-user"></i>
             </div>
-            <input type="text" class="credential-inputs" id="username-txt" placeholder="Username">
+            <input type="text" class="credential-inputs" id="username-txt" placeholder="Username" autocomplete="off">
         </div>
 
         <div class="credential-div" id="password-div">
             <div class="credential-icon-div">
                 <i class="fa-solid fa-lock"></i>
             </div>
-            <input type="password" class="credential-inputs" id="password-txt" placeholder="Password">
+            <input type="password" class="credential-inputs" id="password-txt" placeholder="Password" autocomplete="off">
         </div>
 
         <button id="login-btn">LOGIN</button>

@@ -31,6 +31,7 @@ if ($canAccess == 1) {
         $_SESSION["user"] = $account->BiometricID;          
         $_SESSION["name"] = $account->FullName;
         $_SESSION["section"] = $account->Section;
+        $_SESSION["sectionName"] = "";
         $_SESSION["division"] = $account->Division; 
         $_SESSION["password"] = $password;     
         $_SESSION["Authorized"] = "Yes";
