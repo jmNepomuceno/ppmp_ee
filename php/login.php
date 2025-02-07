@@ -35,6 +35,17 @@ if ($canAccess == 1) {
         $_SESSION["division"] = $account->Division; 
         $_SESSION["password"] = $password;     
         $_SESSION["Authorized"] = "Yes";
+        $_SESSION["role"] = "";
+
+        $admin_bioID = [3374, 3858, 2514];
+
+        if(in_array($_SESSION["user"], $admin_bioID)){
+            $_SESSION["role"] = 'admin';
+        }else{
+            $_SESSION["role"] = "user";
+        }
+
+        echo "/views/home.php";
 
         // include 'config.php';
 
@@ -57,7 +68,6 @@ if ($canAccess == 1) {
         //         }
         //     }
 
-        echo "/views/home.php";
     }
 }
 else {

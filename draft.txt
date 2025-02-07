@@ -350,3 +350,35 @@ VALUES
     ('Single Line Telephone (Black)', 80000, NULL);
 
     
+
+[cart] => Array
+        (
+            [0] => Array
+                (
+                    [itemID] => 1
+                    [itemPrice] => P 80,000.00
+                    [itemQuantity] => 1
+                )
+
+            [1] => Array
+                (
+                    [itemID] => 2
+                    [itemPrice] => P 80,000.00
+                    [itemQuantity] => 3
+                )
+
+            [2] => Array
+                (
+                    [itemID] => 3
+                    [itemPrice] => P 80,000.00
+                    [itemQuantity] => 3
+                )
+
+            [3] => Array
+                (
+                    [itemID] => 4
+                    [itemPrice] => P 80,000.00
+                    [itemQuantity] => 4
+                )
+
+        )

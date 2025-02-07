@@ -1,19 +1,30 @@
+const side_bar_border_style = (view) =>{
+    for(let i = 0; i < $('.side-bar-routes').length; i++){
+        $('.side-bar-routes').eq(i).css('background', '#BA3912');
+        $('.side-bar-routes').eq(i).css('border-left', '0');
+    }
+
+    document.getElementById(view).style.background = "#A23210"
+    document.getElementById(view).style.borderLeft = "5px solid white"
+}
+
 $(document).ready(function(){
+    side_bar_border_style(view)
+
     if(section.length <= 10){
         $('#user-section-span').css('font-size', '1.5em');
     }
 
-    $('.side-bar-routes').click(function(){
-        const index = $(this).index('.side-bar-routes'); 
-        const id = $(this).attr('id');
+    $('#inventory-list-sub-div').click(function(){
+        window.location.href = "../views/home.php";
+    });
 
-        for(let i = 0; i < $('.side-bar-routes').length; i++){
-            $('.side-bar-routes').eq(i).css('background', '#BA3912');
-            $('.side-bar-routes').eq(i).css('border-left', '0');
-        }
+    $('#imiss-inventory-sub-div').click(function(){
+        // window.location.href = "../views/imiss_inventory.php";
+    });
 
-        $(this).css('background', '#A23210');
-        $(this).css('border-left', '5px solid white');
+    $('#incoming-order-sub-div').click(function(){
+        window.location.href = "../views/incoming_order.php";
     });
 
     $('#logout-btn').click(function(){

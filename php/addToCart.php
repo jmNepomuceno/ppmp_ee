@@ -22,12 +22,15 @@ if (isset($_POST['data'])) {
         if($duplicate){
             // check if itemID already exists in cart
             $duplicate_itemID = [];
-            $duplicate_value = json_decode($duplicate['cart'], true);
+            $duplicate_value = [];
 
-            for($i = 0; $i < count($cart); $i++){
-               if(in_array($cart[$i]['itemID'], array_column($duplicate_value, 'itemID'))){
-                    array_push($duplicate_itemID, $cart[$i]['itemID']);
-               }
+            if(isset($duplicate['cart'])){
+                $duplicate_value = json_decode($duplicate['cart'], true);
+                for($i = 0; $i < count($cart); $i++){
+                    if(in_array($cart[$i]['itemID'], array_column($duplicate_value, 'itemID'))){
+                         array_push($duplicate_itemID, $cart[$i]['itemID']);
+                    }
+                 }
             }
 
             if(count($duplicate_itemID) == 0){

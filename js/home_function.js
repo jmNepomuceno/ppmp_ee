@@ -1,24 +1,16 @@
 let modal_placeorder = new bootstrap.Modal(document.getElementById('modal-place-order'));
-// modal_placeorder.show()
+let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
+// modal_notif.show()
 
 const dataTable = () =>{
-
-    // var dataSet = [
-    //     [1, "Brand New Desktop Computer", "80,000", "<input class='quantity-input' type='text' value='2' />", "160,000", "<button class='btn btn-danger'>Remove</button>"],
-    //     [2, "Brand New Desktop Computer", "80,000", "<input class='quantity-input' type='text' value='2' />", "160,000", "<button class='btn btn-danger'>Remove</button>"],
-    //     [3, "Brand New Desktop Computer", "80,000", "<input class='quantity-input' type='text' value='2' />", "160,000", "<button class='btn btn-danger'>Remove</button>"],
-    //     [4, "Brand New Desktop Computer", "80,000", "<input class='quantity-input' type='text' value='2' />", "160,000", "<button class='btn btn-danger'>Remove</button>"],
-    // ];
-
-
     $.ajax({
         url: '../php/checkCurrentCart.php',
         method: "POST",
         dataType : 'JSON',
         success: function(response) {
             console.log(response)
-
-            // Separate indexed array and object
+            
+            // Separate indexed array and object from the response object
             let indexedArray = [];
             let cartObject = {};
 
@@ -29,45 +21,80 @@ const dataTable = () =>{
                     cartObject[key] = response[key]; // Store non-numeric keys in an object
                 }
             }
+            
 
-            // Output results
-            // console.log("Indexed Array:", indexedArray);
-            // console.log("Cart Object:", cartObject.length);
+            // Truncate long product names
+            for (let i = 0; i < indexedArray.length; i++) {
+                if (indexedArray[i].length > 75) {
+                    indexedArray[i] = indexedArray[i].substring(0, 35) + "...";
+                }
+            }
 
-            let dataSet = []
+            if ($.fn.DataTable.isDataTable('#cart-table')) {
+                $('#cart-table').DataTable().destroy();
+                $('#cart-table tbody').empty(); // Clear previous table body
+            }
+
+            // populate the data set
+            let dataSet = [], total_subtotal = 0;
             for (let i = 0; i < indexedArray.length; i++) {
                 let item = cartObject.cart[i];
 
                 // Remove "P" and commas, then convert to a float
                 let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
                 let formattedPrice = "P " + cleanPrice.toLocaleString();
-                console.log(formattedPrice)
+                total_subtotal += cleanPrice;
+
                 dataSet.push([
+                    // gawin mo na lanag div sa susunod
+                    `<span class='item-id-span' style='display:none;'>${item.itemID}</span>`,
                     // `<img src="../images/${item.itemImage}" alt="item-image" class="img-fluid" style="width: 100px; height: 100px;" />`,
-                    item.itemID,
-                    indexedArray[i],
-                    "P " + cleanPrice.toLocaleString(), // Now it's a number
-                    `<input class='quantity-input' type='text' value='${item.itemQuantity}' />`,
-                    formattedPrice, // Multiply as a number
-                    `<button class='btn btn-danger'>Remove</button>`
+                    // item.itemID,
+                    `<span class='item-name-span'>${indexedArray[i]}</span>`,
+                    `<span class='item-price-span'>${ "P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
+                    `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
+                    `<span class="item-subtotal-span">${formattedPrice}</span>`, 
+                    `<div class="action-btn-div"> 
+                        <button class='btn btn-danger remove-item-btn'>Remove</button>
+                        <button class='btn btn-success update-item-btn'>Update</button>
+                    </div>`
                 ]);
             }
+            
+
+            dataSet.push([
+                "<span style='visibility:hidden;'>asdf</span> ",
+                "<span style='visibility:hidden;'>asdf</span> ",
+                "<span style='visibility:hidden;'>asdf</span> ",
+                "<span style='visibility:hidden;'>asdf</span> ",
+                `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
+                ""
+            ]);
+
             console.log(dataSet)
-            // $('#cart-table').DataTable({
-            //     data: dataSet,
-            //     columns: [
-            //         { title: "IMAGE" },
-            //         { title: "PRODUCT" },
-            //         { title: "PRICE" },
-            //         { title: "QUANTITY" },
-            //         { title: "SUBTOTAL" },
-            //         { title: "ACTION" },
-            //     ],
-            //     // "paging": false,
-            //     // "info": false,
-            //     // "ordering": false,
-            //     // "stripeClasses": []
-            // });
+            $('#cart-table').DataTable({
+                data: dataSet,
+                columns: [
+                    { title: "IMAGE", data:0 },
+                    { title: "PRODUCT", data:1 },
+                    { title: "PRICE", data:2 },
+                    { title: "QUANTITY", data:3 },
+                    { title: "SUBTOTAL", data:4 },
+                    { title: "ACTION", data:5 },
+                ],
+                columnDefs: [
+                    { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
+                    { targets: 1, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+                    { targets: 2, createdCell: function(td) { $(td).addClass('item-price-td'); } },
+                    { targets: 3, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
+                    { targets: 4, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } },
+                    { targets: 5, createdCell: function(td) { $(td).addClass('action-btn-td'); } }
+                ]
+                // "paging": false,
+                // "info": false,
+                // "ordering": false,
+                // "stripeClasses": []
+            });
         }
     });
 
@@ -97,7 +124,7 @@ const checkCurrentCart = () =>{
 }
 
 $(document).ready(function(){
-    
+    // dataTable()
     checkCurrentCart()
 
     $('.add-btn').click(function(){
@@ -191,5 +218,78 @@ $(document).ready(function(){
 
     $('#cart-icon').click(function(){
         dataTable() 
+    });
+
+    $(document).off('change input', '.item-quantity-span').on('change input', '.item-quantity-span', function() {        
+        const index = $('.item-quantity-span').index(this);
+        
+        if (parseInt($(this).val()) < 1 || $(this).val() === '') {
+            $(this).val(1); // Reset to 0 if negative
+        }
+
+        $('.update-item-btn').eq(index).css('opacity', '1');
+        $('.update-item-btn').eq(index).css('pointer-events', 'auto');
+    });
+
+    $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
+        const index = $('.update-item-btn').index(this);
+
+        try {
+            $.ajax({
+                url: '../php/updateCart.php',
+                method: "POST",
+                data: {
+                    itemID: $('.item-id-span').eq(index).text(),
+                    itemQuantity: $('.item-quantity-span').eq(index).val()
+                },
+                success: function(response) {
+                    try {
+                        dataTable()
+                    } catch (innerError) {
+                        console.error("Error processing response:", innerError);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX request failed:", error);
+                }
+            });
+        } catch (ajaxError) {
+            console.error("Unexpected error occurred:", ajaxError);
+        }
+    });
+
+    $(document).off('click', '#placeorder-btn').on('click', '#placeorder-btn', function() {        
+        try {
+            $.ajax({
+                url: '../php/placeOrder.php',
+                method: "POST",
+                
+                success: function(response) {
+                    try {
+                        // reset cart data table
+                        $('#cart-table').DataTable().destroy();
+                        $('#cart-table tbody').empty(); 
+
+                        // reset the notif value of the inventory
+                        $('#notif-value').text(0)
+                        $('#notif-value').css('display' , 'none')
+
+                        modal_placeorder.hide()
+                        $('.modal-backdrop').remove(); 
+                        $('body').removeClass('modal-open');
+
+                        $('#modal-notif #modal-title-incoming').text("Order Request Sent.")
+                        modal_notif.show()
+                    } catch (innerError) {
+                        console.error("Error processing response:", innerError);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX request failed:", error);
+                }
+            });
+        } catch (ajaxError) {
+            console.error("Unexpected error occurred:", ajaxError);
+        }
     });
 })
