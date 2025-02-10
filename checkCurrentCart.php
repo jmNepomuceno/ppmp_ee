@@ -4,21 +4,30 @@ include('../assets/connection/sqlconnection.php');
 date_default_timezone_set('Asia/Manila');
 
 try {
-    $sql = "SELECT order_item, orderID FROM ppmp_request WHERE orderID=?";
+    $sql = "SELECT cart FROM user_cart WHERE bioID=?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$_POST['view_orderID']]);
+    $stmt->execute([$_SESSION["user"]]);
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Decode the JSON string in 'order_item' field
-    if ($data && isset($data['order_item'])) {
-        $data['order_item'] = json_decode($data['order_item'], true);
+    if ($data && !empty($data['cart'])) {
+        $decodedCart = json_decode($data['cart'], true);
+
+        // Ensure valid JSON decoding
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $data['cart'] = $decodedCart;
+        } else {
+            $data['cart'] = []; // Fallback to an empty array if decoding fails
+        }
+    } else {
+        $data = ["cart" => []]; // Handle case where no data is found
     }
 
+    
     $itemName_arr = [];
-    for($i = 0; $i < count($data['order_item']); $i++) {
+    for($i = 0; $i < count($data['cart']); $i++) {
         $sql = "SELECT itemName FROM imiss_inventory WHERE itemID=?";
         $stmt = $pdo->prepare($sql);
-        $stmt->execute([$data['order_item'][$i]['itemID']]);
+        $stmt->execute([$data['cart'][$i]['itemID']]);
         $itemName_arr_data = $stmt->fetch(PDO::FETCH_ASSOC);
         array_push($itemName_arr, $itemName_arr_data['itemName']);
     }
@@ -29,7 +38,6 @@ try {
     // Send JSON response
     // echo json_encode($data, JSON_PRETTY_PRINT);
     echo json_encode(array_merge($data , $itemName_arr) , JSON_PRETTY_PRINT);
-
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
 }
