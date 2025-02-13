@@ -5,7 +5,7 @@ date_default_timezone_set('Asia/Manila');
 
 
 try {
-    $sql = "SELECT * FROM ppmp_request";
+    $sql = "SELECT * FROM ppmp_request WHERE order_status='Pending'";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

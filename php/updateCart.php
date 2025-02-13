@@ -5,8 +5,10 @@ date_default_timezone_set('Asia/Manila');
 
 $itemID = (int)$_POST['itemID']; 
 $itemQuantity = $_POST['itemQuantity']; 
+$action = $_POST['action'];
 
 try {
+
     $sql = "SELECT cart FROM user_cart WHERE bioID=?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$_SESSION["user"]]);
@@ -25,14 +27,24 @@ try {
         $current_cart = ["cart" => []]; // Handle case where no data is found
     }
 
-
-    for($i = 0; $i < count($current_cart['cart']); $i++) {
-        if($current_cart['cart'][$i]['itemID'] == $itemID){
-            $current_cart['cart'][$i]['itemQuantity'] = $itemQuantity;
+    if($action == 'update'){
+        for($i = 0; $i < count($current_cart['cart']); $i++) {
+            if($current_cart['cart'][$i]['itemID'] == $itemID){
+                $current_cart['cart'][$i]['itemQuantity'] = $itemQuantity;
+            }
         }
+    }else{
+         // Use array_filter to remove the item with the specified itemID
+        $current_cart['cart'] = array_filter($current_cart['cart'], function($item) use ($itemID) {
+            return $item['itemID'] != $itemID; // Keep items where itemID is not equal to the one to be deleted
+        });
+
+        // Reindex the array to avoid gaps in the keys
+        $current_cart['cart'] = array_values($current_cart['cart']);
     }
 
-    print_r($current_cart);
+
+    // print_r($current_cart);
 
     $sql = "UPDATE user_cart SET cart=? WHERE bioID=?";
     $stmt = $pdo->prepare($sql);

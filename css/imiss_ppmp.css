@@ -7,6 +7,7 @@
 
 ::-webkit-scrollbar {
     width: 8px; 
+    height: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -179,10 +180,13 @@ body .right-container{
 }
 
 body .right-container .table-div{
-    width:90%;
+    width:95%;
     height: 70%;
     padding:20px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    overflow: scroll;
+
+    position: relative;
 }
 
 body .right-container .table-div #cart-table{
@@ -213,12 +217,12 @@ body .right-container .table-div #cart-table thead tr #quarterly-th{
 
 
 
-body .right-container .table-div #cart-table tbody .quarterly-td,
+/* body .right-container .table-div #cart-table tbody .quarterly-td,
 body .right-container .table-div #cart-table tbody .monthly-td{
     margin:0;
     padding:0;
-    /* width: 10px !important; */
-}
+    width: 10px !important;
+} */
 
 body .right-container .table-div #cart-table tbody tr td{
     font-size: 0.8rem;
@@ -227,3 +231,72 @@ body .right-container .table-div #cart-table tbody tr td{
 body .right-container .table-div #cart-table tbody tr td:nth-child(1){
     border-left:2px solid #999990;
 }
+
+/* body .right-container .table-div #cart-table tbody tr .total-quantity-span{
+    border:1px solid red;
+} */
+
+body .right-container .table-div #cart-table tbody tr .item-description-td{
+    width:250px !important;
+}
+
+body .right-container .table-div #cart-table tbody tr td:nth-child(3){
+    position:relative;
+}
+
+body .right-container .table-div #cart-table tbody tr td:nth-child(3) i{
+    position:absolute;
+    bottom:5%;
+    right:5%;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.3;
+}
+
+body .right-container .table-div #cart-table tbody tr td:nth-child(3) i:hover{
+    opacity: 1;
+}
+
+body .right-container .table-div #cart-table tbody tr:last-child{
+    position: sticky;
+    bottom: -30px;
+    background: #d9d9d9;
+    font-weight: bold;
+    border: 1px solid red !important;
+    z-index: 2; /* Ensures it's above other rows */
+}
+
+
+.item-quantity-draft{
+    width:40px !important;
+    text-align: center;
+    outline:none;
+    border-radius: 5px;
+    border:1px solid gray;
+
+    pointer-events: none;
+    border:none;
+}
+
+.edit-quantity-draft,
+.save-quantity-draft{
+    background: #ffc108;
+    padding:3px;
+    border:none;
+    width:40px;
+    border-radius: 5px;
+}
+
+.save-quantity-draft{
+    color:white;
+    visibility:hidden;
+    background: #28a645;
+}
+
+
+body .right-container .table-div #cart-table thead tr:nth-child(2) th:nth-child(1){
+    border-left:none;
+}
+
+/* 021025 - 2:50pm */
+

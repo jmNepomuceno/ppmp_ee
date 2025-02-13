@@ -19,6 +19,10 @@ $(document).ready(function(){
         window.location.href = "../views/home.php";
     });
 
+    $('#order-management-sub-div').click(function(){
+        window.location.href = "../views/order_management.php";
+    });
+
     $('#imiss-inventory-sub-div').click(function(){
         // window.location.href = "../views/imiss_inventory.php";
     });

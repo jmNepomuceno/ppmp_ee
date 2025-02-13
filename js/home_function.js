@@ -1,6 +1,6 @@
 let modal_placeorder = new bootstrap.Modal(document.getElementById('modal-place-order'));
 let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
-// modal_notif.show()
+// modal_placeorder.show()
 
 const dataTable = () =>{
     $.ajax({
@@ -99,8 +99,6 @@ const dataTable = () =>{
     });
 
     
-
-    
 }
 
 const checkCurrentCart = () =>{
@@ -123,9 +121,82 @@ const checkCurrentCart = () =>{
     });
 }
 
+const pagination = () => {
+    let currentPage = 1;
+
+    function showPage(page) {
+        let items = $(".item-tile").not(".hidden-item"); // Get only visible items
+        totalPages = Math.ceil(items.length / itemsPerPage);
+        
+        $(".item-tile").hide(); // Hide all items
+        let start = (page - 1) * itemsPerPage;
+        let end = start + itemsPerPage;
+
+        items.slice(start, end).show(); // Show only paginated items
+        updatePagination(page, totalPages);
+    }
+
+    function updatePagination(page, totalPages) {
+        let paginationHTML = "";
+        let maxVisiblePages = 5;
+
+        $("#prevPage").prop("disabled", page === 1);
+        $("#nextPage").prop("disabled", page === totalPages);
+
+        // Always show the first page
+        if (page > 3) {
+            paginationHTML += `<button class="pagination-btn" data-page="1">1</button> ... `;
+        }
+
+        // Generate page numbers dynamically
+        let startPage = Math.max(1, page - 2);
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `<button class="pagination-btn ${i === page ? 'active-page' : ''}" data-page="${i}">${i}</button> `;
+        }
+
+        // Always show the last page
+        if (page < totalPages - 2) {
+            paginationHTML += ` ... <button class="pagination-btn" data-page="${totalPages}">${totalPages}</button>`;
+        }
+
+        $("#pagination-numbers").html(paginationHTML);
+    }
+
+    // Initial page load
+    showPage(currentPage);
+
+    // Pagination button events
+    $("#prevPage").click(() => {
+        if (currentPage > 1) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    });
+
+    $("#nextPage").click(() => {
+        let totalPages = Math.ceil($(".item-tile").not(".hidden-item").length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    });
+
+    $(document).on("click", ".pagination-btn", function() {
+        currentPage = parseInt($(this).attr("data-page"));
+        showPage(currentPage);
+    });
+
+    return { showPage }; // Return function to use in search
+};
+
+let paginationInstance = pagination();
+
 $(document).ready(function(){
     // dataTable()
     checkCurrentCart()
+    pagination()
 
     $('.add-btn').click(function(){
         const index = $(this).index('.add-btn'); 
@@ -240,11 +311,43 @@ $(document).ready(function(){
                 method: "POST",
                 data: {
                     itemID: $('.item-id-span').eq(index).text(),
-                    itemQuantity: $('.item-quantity-span').eq(index).val()
+                    itemQuantity: $('.item-quantity-span').eq(index).val(),
+                    action : "update"
                 },
                 success: function(response) {
                     try {
                         dataTable()
+                        checkCurrentCart()
+                    } catch (innerError) {
+                        console.error("Error processing response:", innerError);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX request failed:", error);
+                }
+            });
+        } catch (ajaxError) {
+            console.error("Unexpected error occurred:", ajaxError);
+        }
+    });
+
+    $(document).off('click', '.remove-item-btn').on('click', '.remove-item-btn', function() {        
+        const index = $('.remove-item-btn').index(this);
+
+        console.log(index)
+        try {
+            $.ajax({
+                url: '../php/updateCart.php',
+                method: "POST",
+                data: {
+                    itemID: $('.item-id-span').eq(index).text(),
+                    itemQuantity: $('.item-quantity-span').eq(index).val(),
+                    action : "delete"
+                },
+                success: function(response) {
+                    try {
+                        dataTable()
+                        checkCurrentCart()
                     } catch (innerError) {
                         console.error("Error processing response:", innerError);
                     }
@@ -290,6 +393,33 @@ $(document).ready(function(){
             });
         } catch (ajaxError) {
             console.error("Unexpected error occurred:", ajaxError);
+        }
+    });
+
+    $('#search-btn').on('click', function() {
+        let searchInput = $('#search-input').val().toLowerCase();
+    
+        if (searchInput !== "") {
+            $('.item-tile').each(function() {
+                var itemName = $(this).find('.item-description').text().toLowerCase();
+    
+                // If the item name includes the search input, show it; otherwise, mark it as hidden
+                if (itemName.includes(searchInput)) {
+                    $(this).removeClass("hidden-item");
+                } else {
+                    $(this).addClass("hidden-item");
+                }
+            });
+        } else {
+            $(".item-tile").removeClass("hidden-item"); // Show all items if search is empty
+        }
+    
+        paginationInstance.showPage(1); // Reset pagination after search
+    });
+
+    $('#search-input').on('keydown', function(e) {
+        if (e.key === "Enter") {
+            $('#search-btn').click();
         }
     });
 })

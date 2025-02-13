@@ -3,6 +3,7 @@
     include('../assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');
 
+
 ?>
 
 <!DOCTYPE html>
@@ -20,14 +21,17 @@
     
     <?php 
         $view = "inventory-list-sub-div";
-        include("./sidebar.php")
+        include("./sidebar.php");
+        $items_per_page = 10; // Set how many items to show per page
+        $total_items = count($item_data);
+        $total_pages = ceil($total_items / $items_per_page); // Calculate total pages
     ?>
 
     <div class="right-container">
 
         <div class="function-bar">
             <div class="search-bar">
-                <input type="text" id="search-input"/>
+                <input type="text" id="search-input" />
                 <button id="search-btn">Search</button>
             </div>
             
@@ -40,11 +44,14 @@
         </div>
 
         <div class="inventory-div">
-            <?php for($i = 0; $i < count($item_data); $i++){?>
-                <div class="tiles-div" id="tile-div-1">
+            <?php for ($i = 0; $i < $total_items; $i++) { ?>
+                <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
                     <img class="item-img" src="../source/inventory_image/item_1.png" alt="item-1-img">
                     
-                    <p class="item-description"><?php echo $item_data[$i]['itemName'] ?> <span style="display:none" class="item-id"><?php echo $item_data[$i]['itemID'] ?></span></p>
+                    <p class="item-description">
+                        <?php echo $item_data[$i]['itemName']; ?> 
+                        <span style="display:none" class="item-id"><?php echo $item_data[$i]['itemID']; ?></span>
+                    </p>
                     <span class="item-price">P 80,000.00</span>
                     
                     <div class="function-div">
@@ -57,6 +64,13 @@
                     </div>
                 </div>
             <?php } ?>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <button id="prevPage" disabled>Previous</button>
+            <span id="pagination-numbers"></span>
+            <button id="nextPage">Next</button>
         </div>
     </div>
 
@@ -120,6 +134,11 @@
     <?php require "../links/script_links.php" ?>
     <script> 
         var section = "<?php echo $section ?>";
+
+        var itemsPerPage = <?php echo $items_per_page; ?>;
+        var totalItems = <?php echo $total_items; ?>;
+        var totalPages = <?php echo $total_pages; ?>;
+        
     </script>
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>
     <script src="../js/home_function.js?v=<?php echo time(); ?>"></script>

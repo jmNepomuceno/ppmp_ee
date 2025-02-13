@@ -176,6 +176,8 @@ body .right-container{
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
+
+    position:relative;
 }
 
 body .right-container .function-bar{
@@ -198,6 +200,7 @@ body .right-container .function-bar .search-bar{
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
+
 }
 
 body .right-container .function-bar .search-bar input{
@@ -312,14 +315,11 @@ body .right-container .inventory-div{
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-
-    overflow-y: scroll;
 }
 
 body .right-container .inventory-div .tiles-div{
     width: 250px;
     height: 350px;
-    /* margin-left: 30px; */
     margin:15px;
 
     display:flex;
@@ -430,6 +430,40 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
     font-weight: 600;
     opacity:0.5;
     pointer-events: none;
+}
+
+
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-top: 20px; */
+}
+.pagination-controls button, .pagination-controls span {
+    margin: 5px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+}
+
+.pagination-controls #prevPage,
+.pagination-controls #nextPage{
+    background: #ff5521;
+    color:white;
+    border-radius: 5px;
+}
+
+.pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.pagination-controls .active-page {
+    font-weight: bold;
+    color: white;
+    background: #ff5521;
+    
 }
 
 
@@ -565,4 +599,59 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
     border-radius: 5px;
     font-size: 0.9rem;
     font-weight: bold;
+}
+
+@media only screen and (max-height: 800px){
+    body .right-container .inventory-div{
+        margin-top: 10px;
+
+        display:flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    body .right-container .inventory-div .tiles-div{
+        width: 200px;
+        height: 250px;
+        margin:5px;
+    }
+
+    body .right-container .inventory-div .tiles-div img{
+        height: 100px;
+    }
+
+    body .right-container .inventory-div .tiles-div .item-description{
+        font-size: 0.7rem;
+    }
+
+    body .right-container .inventory-div .tiles-div .item-price{
+        font-size: 0.85rem;
+    }
+
+    body .right-container .inventory-div .tiles-div .function-div{
+        height: 30px;
+    }
+
+    body .right-container .inventory-div .tiles-div .function-div .add-div .current-total-span{
+        font-size: 1.3rem;
+    }
+    
+    body .right-container .inventory-div .tiles-div .function-div .add-div .add-btn,
+    body .right-container .inventory-div .tiles-div .function-div .add-div .minus-btn{
+        height: 0;
+        width: 0;
+        padding:10px;
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    
+    body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
+        padding: 0 10px 0 10px;
+        font-size: 0.9rem;
+    }
 }
