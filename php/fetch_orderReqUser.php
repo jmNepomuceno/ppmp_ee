@@ -10,73 +10,76 @@ try {
     $stmt->execute([(int)$_SESSION['user']]);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    for($i = 0; $i < count($data); $i++){
-        if ($data[$i]['order_item'] && !empty($data[$i]['order_item'])) {
-            $decodedCart = json_decode($data[$i]['order_item'], true);
+    for ($i = 0; $i < count($data); $i++) {
+        $data[$i]['order_item'] = !empty($data[$i]['order_item']) ? json_decode($data[$i]['order_item'], true) : [];
 
-            // Ensure valid JSON decoding
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $data[$i]['order_item'] = $decodedCart;
-            } else {
-                $data[$i]['order_item'] = []; // Fallback to an empty array if decoding fails
-            }
-        } else {
-            $data[$i]['order_item'] = ["order_item" => []]; // Handle case where no data is found
-        }
-
+        // Fetch order_by fullName
         $sql = "SELECT fullName FROM user_cart WHERE bioID=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([(int)$data[$i]['order_by']]);
-        $data_name = $stmt->fetch(PDO::FETCH_ASSOC);
+        $data[$i]['order_by_name'] = $stmt->fetchColumn();
 
+        // Fetch sectionName
         $sql = "SELECT sectionName FROM pgsSection WHERE sectionID=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([(int)$data[$i]['order_by_section']]);
-        $data_section = $stmt->fetch(PDO::FETCH_ASSOC);
+        $data[$i]['order_by_sectionName'] = $stmt->fetchColumn();
 
+        // Fetch request history
         $sql = "SELECT * FROM request_history WHERE orderID=?";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$data[$i]['orderID']]);
         $history_orderID = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        for($j = 0; $j < count($history_orderID); $j++){
-            if ($history_orderID[$j]['previousOrder'] && !empty($history_orderID[$j]['previousOrder'])) {
-                $decodedCart = json_decode($history_orderID[$j]['previousOrder'], true);
-    
-                // Ensure valid JSON decoding
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $history_orderID[$j]['previousOrder'] = $decodedCart;
-                } else {
-                    $history_orderID[$j]['previousOrder'] = []; // Fallback to an empty array if decoding fails
+        // Collect all itemIDs from previousOrder and updatedOrder
+        $allItemIDs = [];
+        foreach ($history_orderID as &$history) {
+            foreach (['previousOrder', 'updatedOrder'] as $orderKey) {
+                if (!empty($history[$orderKey])) {
+                    $decodedCart = json_decode($history[$orderKey], true);
+                    if (json_last_error() === JSON_ERROR_NONE) {
+                        foreach ($decodedCart as $orderItem) {
+                            if (!empty($orderItem['itemID'])) {
+                                $allItemIDs[] = (int)$orderItem['itemID'];
+                            }
+                        }
+                        $history[$orderKey] = $decodedCart;
+                    } else {
+                        $history[$orderKey] = [];
+                    }
                 }
-            } else {
-                $history_orderID[$j]['previousOrder'] = ["previousOrder" => []]; // Handle case where no data is found
-            }
-
-            if ($history_orderID[$j]['updatedOrder'] && !empty($history_orderID[$j]['updatedOrder'])) {
-                $decodedCart = json_decode($history_orderID[$j]['updatedOrder'], true);
-    
-                // Ensure valid JSON decoding
-                if (json_last_error() === JSON_ERROR_NONE) {
-                    $history_orderID[$j]['updatedOrder'] = $decodedCart;
-                } else {
-                    $history_orderID[$j]['updatedOrder'] = []; // Fallback to an empty array if decoding fails
-                }
-            } else {
-                $history_orderID[$j]['updatedOrder'] = ["updatedOrder" => []]; // Handle case where no data is found
             }
         }
 
-        $data[$i]['order_by_name'] = $data_name['fullName'];
-        $data[$i]['order_by_sectionName'] = $data_section['sectionName'];
+        // Remove duplicate itemIDs and fetch item names in one query
+        if (!empty($allItemIDs)) {
+            $placeholders = implode(',', array_fill(0, count($allItemIDs), '?'));
+            $sql = "SELECT itemID, itemName FROM imiss_inventory WHERE itemID IN ($placeholders)";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute($allItemIDs);
+            $itemsMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // Fetch as key-value pair (itemID => itemName)
+        } else {
+            $itemsMap = [];
+        }
+
+        // Attach item names to previousOrder and updatedOrder
+        foreach ($history_orderID as &$history) {
+            foreach (['previousOrder', 'updatedOrder'] as $orderKey) {
+                foreach ($history[$orderKey] as &$orderItem) {
+                    $orderItem['itemName'] = $itemsMap[$orderItem['itemID']] ?? "Unknown Item";
+                }
+            }
+        }
+
+        // Attach updated history to main data array
         $data[$i]['history_update'] = $history_orderID;
     }
 
     echo json_encode($data);
+
+    // print_r($data[3]['history_update'][0]['previousOrder'][0]['itemID']);
 } catch (PDOException $e) {
     echo json_encode(["error" => $e->getMessage()]);
 }
 
-// e/i ka wo/u lo/u ngo/u
-// i ka wa la nga
 ?>

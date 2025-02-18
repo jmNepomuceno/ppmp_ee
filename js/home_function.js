@@ -116,6 +116,9 @@ const checkCurrentCart = () =>{
             if(total_current_addCart > 0){
                 $('#notif-value').css('display' , 'block')
                 $('#notif-value').text(total_current_addCart)
+            }else{
+                $('#notif-value').css('display' , 'none')
+                $('#notif-value').text(0)
             }
         }
     });

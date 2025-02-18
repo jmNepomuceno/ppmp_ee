@@ -71,7 +71,7 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
             // Separate indexed array and object from the response object
             let indexedArray = [];
             let cartObject = {};
-
+            
             for (const key in response) {
                 if (!isNaN(key)) {
                     indexedArray[parseInt(key)] = response[key]; // Store in an array
@@ -105,7 +105,7 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
                 let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
                 let formattedPrice = "P " + cleanPrice.toLocaleString();
                 total_subtotal += cleanPrice;
-
+                
                 dataSet.push([
                     // gawin mo na lanag div sa susunod
                     `<span class='item-id-span' style='display:none;'>${item.itemID}</span>`,
@@ -289,19 +289,22 @@ $(document).ready(function(){
 
     $(document).off('click', '.remove-item-btn').on('click', '.remove-item-btn', function() {        
         const index = $('.remove-item-btn').index(this);
+        
         try {
             $.ajax({
                 url: '../php/update_pending_request.php',
                 method: "POST",
                 data: {
-                    orderID : $('.view-request-span').eq(index).attr('id'),
+                    orderID : incoming_orderID_clicked,
                     itemID: $('.item-id-span').eq(index).text(),
                     itemQuantity: $('.item-quantity-span').eq(index).val(),
                     action : "delete"
                 },
+                // dataType : 'json',
                 success: function(response) {
-                    try {
-                        const orderID = $('.view-request-span').eq(index).attr('id')
+                    try { 
+                        console.log(response)
+                        const orderID = incoming_orderID_clicked
                         const sectionName = $('.request-section-span').eq(index).attr('id')
                         dataTable_viewRequest(orderID, sectionName)
 

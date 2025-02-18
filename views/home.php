@@ -3,7 +3,7 @@
     include('../assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');
 
-
+    // print_r($_SESSION);
 ?>
 
 <!DOCTYPE html>
@@ -44,9 +44,17 @@
         </div>
 
         <div class="inventory-div">
-            <?php for ($i = 0; $i < $total_items; $i++) { ?>
+            <?php for ($i = 0; $i < $total_items; $i++) { 
+                // Convert BLOB to base64
+                $itemImageData = $item_data[$i]['itemImage']; // Get the BLOB data
+                if (!empty($itemImageData)) {
+                    $imageSrc = 'data:image/jpeg;base64,' . base64_encode($itemImageData);
+                } else {
+                    $imageSrc = 'path/to/default-image.jpg'; // Provide a default image path
+                }
+            ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
-                    <img class="item-img" src="../source/inventory_image/item_1.png" alt="item-1-img">
+                    <img class="item-img" src="<?php echo $imageSrc; ?>" alt="item-1-img">
                     
                     <p class="item-description">
                         <?php echo $item_data[$i]['itemName']; ?> 
@@ -65,6 +73,7 @@
                 </div>
             <?php } ?>
         </div>
+
 
         <!-- Pagination Controls -->
         <div class="pagination-controls">

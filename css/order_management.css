@@ -410,3 +410,9 @@ body .right-container .table-div #cart-table tbody tr td .imiss-update-span:hove
 #modal-view-update .view-update-span{
     background: red;
 }
+
+#modal-view-update .history-span{
+    color:red;
+    font-style: italic;
+    font-size: 0.8rem;
+}
