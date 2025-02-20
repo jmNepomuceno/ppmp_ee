@@ -19,7 +19,7 @@ try {
             $stmt->execute([
                 $_POST['orderItem'][$i]['itemID'],
                 $_POST['orderID'],
-                $_POST['items'][$i],
+                $_POST['orderItem'][$i]['itemName'],
                 $_POST['orderItem'][$i]['itemQuantity'],      
                 "set",      
                 $itemPrice,      

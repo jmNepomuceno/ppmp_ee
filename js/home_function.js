@@ -9,26 +9,15 @@ const dataTable = () =>{
         dataType : 'JSON',
         success: function(response) {
             console.log(response)
-            
-            // Separate indexed array and object from the response object
-            let indexedArray = [];
-            let cartObject = {};
-
-            for (const key in response) {
-                if (!isNaN(key)) {
-                    indexedArray[parseInt(key)] = response[key]; // Store in an array
-                } else {
-                    cartObject[key] = response[key]; // Store non-numeric keys in an object
-                }
-            }
-            
 
             // Truncate long product names
-            for (let i = 0; i < indexedArray.length; i++) {
-                if (indexedArray[i].length > 75) {
-                    indexedArray[i] = indexedArray[i].substring(0, 35) + "...";
+            for (let i = 0; i < response.cart.length; i++) {
+                if (response.cart[i]['itemName'].length > 75) {
+                    response.cart[i]['itemName'] = response.cart[i]['itemName'].substring(0, 35) + "...";
                 }
             }
+
+            // comnspole.log()
 
             if ($.fn.DataTable.isDataTable('#cart-table')) {
                 $('#cart-table').DataTable().destroy();
@@ -37,8 +26,8 @@ const dataTable = () =>{
 
             // populate the data set
             let dataSet = [], total_subtotal = 0;
-            for (let i = 0; i < indexedArray.length; i++) {
-                let item = cartObject.cart[i];
+            for (let i = 0; i <  response.cart.length; i++) {
+                let item =  response.cart[i];
 
                 // Remove "P" and commas, then convert to a float
                 let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
@@ -46,11 +35,9 @@ const dataTable = () =>{
                 total_subtotal += cleanPrice;
 
                 dataSet.push([
-                    // gawin mo na lanag div sa susunod
-                    `<span class='item-id-span' style='display:none;'>${item.itemID}</span>`,
-                    // `<img src="../images/${item.itemImage}" alt="item-image" class="img-fluid" style="width: 100px; height: 100px;" />`,
-                    // item.itemID,
-                    `<span class='item-name-span'>${indexedArray[i]}</span>`,
+                    `<span class='item-id-span' >${item.itemID}</span>`,
+                    `<span class='item-image-span'><img src="${item.itemImage}" alt="item-1-img"/></span>`,
+                    `<span class='item-name-span'>${item.itemName}</span>`,
                     `<span class='item-price-span'>${ "P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
                     `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
                     `<span class="item-subtotal-span">${formattedPrice}</span>`, 
@@ -68,6 +55,7 @@ const dataTable = () =>{
                 "<span style='visibility:hidden;'>asdf</span> ",
                 "<span style='visibility:hidden;'>asdf</span> ",
                 `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
+                "",
                 ""
             ]);
 
@@ -75,20 +63,22 @@ const dataTable = () =>{
             $('#cart-table').DataTable({
                 data: dataSet,
                 columns: [
-                    { title: "IMAGE", data:0 },
-                    { title: "PRODUCT", data:1 },
-                    { title: "PRICE", data:2 },
-                    { title: "QUANTITY", data:3 },
-                    { title: "SUBTOTAL", data:4 },
-                    { title: "ACTION", data:5 },
+                    { title: "ITEM ID", data:0},
+                    { title: "IMAGE", data:1 },
+                    { title: "PRODUCT", data:2 },
+                    { title: "PRICE", data:3 },
+                    { title: "QUANTITY", data:4 },
+                    { title: "SUBTOTAL", data:5 },
+                    { title: "ACTION", data:6 },
                 ],
                 columnDefs: [
                     { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
-                    { targets: 1, createdCell: function(td) { $(td).addClass('item-name-td'); } },
-                    { targets: 2, createdCell: function(td) { $(td).addClass('item-price-td'); } },
-                    { targets: 3, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
-                    { targets: 4, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } },
-                    { targets: 5, createdCell: function(td) { $(td).addClass('action-btn-td'); } }
+                    { targets: 1, createdCell: function(td) { $(td).addClass('item-image-td'); } },
+                    { targets: 2, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+                    { targets: 3, createdCell: function(td) { $(td).addClass('item-price-td'); } },
+                    { targets: 4, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
+                    { targets: 5, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } },
+                    { targets: 6, createdCell: function(td) { $(td).addClass('action-btn-td'); } }
                 ]
                 // "paging": false,
                 // "info": false,
@@ -199,7 +189,6 @@ let paginationInstance = pagination();
 $(document).ready(function(){
     // dataTable()
     checkCurrentCart()
-    pagination()
 
     $('.add-btn').click(function(){
         const index = $(this).index('.add-btn'); 
@@ -308,6 +297,7 @@ $(document).ready(function(){
     $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
         const index = $('.update-item-btn').index(this);
 
+
         try {
             $.ajax({
                 url: '../php/updateCart.php',
@@ -318,9 +308,16 @@ $(document).ready(function(){
                     action : "update"
                 },
                 success: function(response) {
+                    console.log(response)
                     try {
-                        dataTable()
+                        // dataTable()
                         checkCurrentCart()
+                        $('#modal-notif #modal-title-incoming').text("Successfully edited.")
+                        modal_notif.show()
+
+                        setTimeout(() => {
+                            modal_notif.hide(); 
+                        }, 2000);
                     } catch (innerError) {
                         console.error("Error processing response:", innerError);
                     }
@@ -351,6 +348,8 @@ $(document).ready(function(){
                     try {
                         dataTable()
                         checkCurrentCart()
+                        $('#modal-notif #modal-title-incoming').text("Successfully removed.")
+                        modal_notif.show()
                     } catch (innerError) {
                         console.error("Error processing response:", innerError);
                     }

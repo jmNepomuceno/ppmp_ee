@@ -301,6 +301,10 @@ body .right-container .table-div #cart-table tbody tr td .view-request-span:hove
     font-weight: 900;
 }
 
+#modal-view-request #cart-table-request thead tr th:nth-child(1){
+    display:none;
+}
+
 
 #modal-view-request #cart-table-request tbody tr:nth-child(even){
     background: #F2F2F2;
@@ -317,6 +321,14 @@ body .right-container .table-div #cart-table tbody tr td .view-request-span:hove
 
 #modal-view-request #cart-table-request tbody tr .item-id-td{
     width: 10%;
+    display:none;
+
+}
+
+
+#modal-view-request #cart-table-request tbody tr .item-image-td .item-image-span img{
+    width:150px;
+    height: 90px;
 }
 
 #modal-view-request #cart-table-request tbody tr .item-name-td{

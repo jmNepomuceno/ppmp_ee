@@ -311,6 +311,10 @@ body .right-container .table-div #cart-table tbody tr td .imiss-update-span:hove
 }
 
 
+#modal-view-request #cart-table-request thead tr th:nth-child(1){
+    display:none;
+}
+
 #modal-view-request #cart-table-request tbody tr:nth-child(even),
 #modal-view-update #cart-table-update tbody tr:nth-child(even){
     background: #F2F2F2;
@@ -329,6 +333,14 @@ body .right-container .table-div #cart-table tbody tr td .imiss-update-span:hove
 #modal-view-request #cart-table-request tbody tr .item-id-td,
 #modal-view-update #cart-table-update tbody tr .item-id-td{
     width: 10%;
+    display:none;
+}
+
+#modal-view-request #cart-table-request tbody tr .item-image-td .item-image-span img,
+#modal-view-update #cart-table-update tbody tr .item-image-td .item-image-span img{
+    width:150px;
+    height: 90px;
+
 }
 
 #modal-view-request #cart-table-request tbody tr .item-name-td,

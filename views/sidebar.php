@@ -9,18 +9,6 @@
         $section = $data[0]['sectionName'];
         $_SESSION["sectionName"] = $section;
 
-        $sql = "SELECT * FROM imiss_inventory";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        for($i = 0; $i < count($item_data); $i++) {
-            if (isset($item_data[$i]['itemName']) && strlen($item_data[$i]['itemName']) > 75) {
-                $item_data[$i]['itemName'] = substr($item_data[$i]['itemName'], 0, 75) . "...";
-            }
-        }
-
-
     } catch (PDOException $e) {
         die("Database error: " . $e->getMessage());
     }

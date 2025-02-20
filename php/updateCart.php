@@ -52,6 +52,8 @@ try {
         json_encode($current_cart['cart']), // Store as JSON
         $_SESSION["user"],
     ]);
+
+    echo "success";
 } catch (PDOException $e) {
     echo json_encode(["error" => $e->getMessage()]);
 }

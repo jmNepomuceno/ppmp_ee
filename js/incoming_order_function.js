@@ -68,26 +68,14 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
         dataType : 'JSON',
         success: function(response) {
             console.log(response)
-            // Separate indexed array and object from the response object
-            let indexedArray = [];
-            let cartObject = {};
-            
-            for (const key in response) {
-                if (!isNaN(key)) {
-                    indexedArray[parseInt(key)] = response[key]; // Store in an array
-                } else {
-                    cartObject[key] = response[key]; // Store non-numeric keys in an object
-                }
-            }
-            
-            selectedRequest_data['items'] = indexedArray
+
             selectedRequest_data['orderID'] = response.orderID
             selectedRequest_data['orderItem'] = response.order_item
 
             // Truncate long product names
-            for (let i = 0; i < indexedArray.length; i++) {
-                if (indexedArray[i].length > 75) {
-                    indexedArray[i] = indexedArray[i].substring(0, 35) + "...";
+            for (let i = 0; i < response.order_item.length; i++) {
+                if (response.order_item[i].length > 75) {
+                    response.order_item[i] = response.order_item[i].substring(0, 35) + "...";
                 }
             }
 
@@ -98,58 +86,62 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
 
             // populate the data set
             let dataSet = [], total_subtotal = 0;
-            for (let i = 0; i < indexedArray.length; i++) {
-                let item = cartObject.order_item[i];
+            for (let i = 0; i < response.order_item.length; i++) {
+                let item = response.order_item[i];
 
                 // Remove "P" and commas, then convert to a float
                 let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
                 let formattedPrice = "P " + cleanPrice.toLocaleString();
                 total_subtotal += cleanPrice;
-                
-                dataSet.push([
-                    // gawin mo na lanag div sa susunod
-                    `<span class='item-id-span' style='display:none;'>${item.itemID}</span>`,
-                    // `<img src="../images/${item.itemImage}" alt="item-image" class="img-fluid" style="width: 100px; height: 100px;" />`,
-                    // item.itemID,
-                    `<span class='item-name-span'>${indexedArray[i]}</span>`,
-                    `<span class='item-price-span'>${ "P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
+
+                let rowData = [
+                    `<span class='item-id-span'>${item.itemID}</span>`,
+                    `<span class='item-image-span'><img src="${item.itemImage}" alt="item-1-img"/></span>`,
+                    `<span class='item-name-span'>${item.itemName}</span>`,
+                    `<span class='item-price-span'>${"P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
                     `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
-                    `<span class="item-subtotal-span">${formattedPrice}</span>`, 
-                    `<div class="action-btn-div"> 
-                        <button class='btn btn-danger remove-item-btn'>Reject</button>
-                        <button class='btn btn-success update-item-btn'>Update</button>
-                    </div>`
-                ]);
+                    `<span class='item-subtotal-span'>${formattedPrice}</span>`,
+                    `<div class='action-btn-div'> 
+                            <button class='btn btn-danger remove-item-btn'>Reject</button>
+                            <button class='btn btn-success update-item-btn'>Update</button>
+                        </div>
+                    `
+                ];
+
+
+                dataSet.push(rowData);
             }
             
 
-            dataSet.push([
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-                `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
-                ""
-            ]);
+            // dataSet.push([
+            //     "<span style='visibility:hidden;'>asdf</span> ",
+            //     "<span style='visibility:hidden;'>asdf</span> ",
+            //     "<span style='visibility:hidden;'>asdf</span> ",
+            //     "<span style='visibility:hidden;'>asdf</span> ",
+            //     `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
+            //     ""
+            // ]);
 
             console.log(dataSet)
             $('#cart-table-request').DataTable({
                 data: dataSet,
                 columns: [
-                    { title: "IMAGE", data:0 },
-                    { title: "PRODUCT", data:1 },
-                    { title: "PRICE", data:2 },
-                    { title: "QUANTITY", data:3 },
-                    { title: "SUBTOTAL", data:4 },
-                    { title: "ACTION", data:5 },
+                    { title: "ITEM ID", data:0},
+                    { title: "IMAGE", data:1 },
+                    { title: "PRODUCT", data:2 },
+                    { title: "PRICE", data:3 },
+                    { title: "QUANTITY", data:4 },
+                    { title: "SUBTOTAL", data:5 },
+                    { title: "ACTION", data:6 },
                 ],
                 columnDefs: [
                     { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
-                    { targets: 1, createdCell: function(td) { $(td).addClass('item-name-td'); } },
-                    { targets: 2, createdCell: function(td) { $(td).addClass('item-price-td'); } },
-                    { targets: 3, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
-                    { targets: 4, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } },
-                    { targets: 5, createdCell: function(td) { $(td).addClass('action-btn-td'); } }
+                    { targets: 1, createdCell: function(td) { $(td).addClass('item-image-td'); } },
+                    { targets: 2, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+                    { targets: 3, createdCell: function(td) { $(td).addClass('item-price-td'); } },
+                    { targets: 4, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
+                    { targets: 5, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } },
+                    { targets: 6, createdCell: function(td) { $(td).addClass('action-btn-td'); } }
                 ]
                 // "paging": false,
                 // "info": false,
@@ -255,6 +247,13 @@ $(document).ready(function(){
 
     $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
         const index = $('.update-item-btn').index(this);
+        // console.log({
+        //     orderID : incoming_orderID_clicked,
+        //     itemID: $('.item-id-span').eq(index).text(),
+        //     itemQuantity: $('.item-quantity-span').eq(index).val(),
+        //     action : "update"
+        // })
+
         try {
             $.ajax({
                 url: '../php/update_pending_request.php',

@@ -26,7 +26,8 @@ try {
         $data[$i]['order_by_sectionName'] = $stmt->fetchColumn();
 
         // Fetch request history
-        $sql = "SELECT * FROM request_history WHERE orderID=?";
+        // 3374, 3858, 2514
+        $sql = "SELECT * FROM request_history WHERE orderID=? AND (edit_by=3374 OR edit_by=3858 OR edit_by=2514)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([$data[$i]['orderID']]);
         $history_orderID = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -54,19 +55,27 @@ try {
         // Remove duplicate itemIDs and fetch item names in one query
         if (!empty($allItemIDs)) {
             $placeholders = implode(',', array_fill(0, count($allItemIDs), '?'));
-            $sql = "SELECT itemID, itemName FROM imiss_inventory WHERE itemID IN ($placeholders)";
+            $sql = "SELECT itemID, itemName, itemImage FROM imiss_inventory WHERE itemID IN ($placeholders)";
             $stmt = $pdo->prepare($sql);
             $stmt->execute($allItemIDs);
-            $itemsMap = $stmt->fetchAll(PDO::FETCH_KEY_PAIR); // Fetch as key-value pair (itemID => itemName)
+            $itemsMap = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch as associative array (itemID => [itemName, itemImage])
+
+            // Create a map to easily access itemName and itemImage by itemID
+            $itemsMap = array_column($itemsMap, null, 'itemID');
         } else {
             $itemsMap = [];
         }
 
-        // Attach item names to previousOrder and updatedOrder
+        // Attach item names and item images to previousOrder and updatedOrder
         foreach ($history_orderID as &$history) {
             foreach (['previousOrder', 'updatedOrder'] as $orderKey) {
                 foreach ($history[$orderKey] as &$orderItem) {
-                    $orderItem['itemName'] = $itemsMap[$orderItem['itemID']] ?? "Unknown Item";
+                    $itemID = $orderItem['itemID'];
+                    // Attach item name and item image from the map
+                    $orderItem['itemName'] = $itemsMap[$itemID]['itemName'] ?? "Unknown Item";
+                    $orderItem['itemImage'] = !empty($itemsMap[$itemID]['itemImage'])
+                        ? 'data:image/jpeg;base64,' . base64_encode($itemsMap[$itemID]['itemImage'])
+                        : 'path/to/default-image.jpg';
                 }
             }
         }

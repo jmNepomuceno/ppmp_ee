@@ -72,29 +72,12 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
         success: function(response) {
             console.log(response)
 
-            // Separate indexed array and object from the response object
-            let indexedArray = [];
-            let cartObject = {};
             let order_status = ""
 
-            for (const key in response) {
-                if (!isNaN(key)) {
-                    indexedArray[parseInt(key)] = response[key]; // Store in an array
-                } else {
-                    cartObject[key] = response[key]; // Store non-numeric keys in an object
-                }
-            }
-            console.log(indexedArray)
-            console.log(cartObject)
-            
-            selectedRequest_data['items'] = indexedArray
-            selectedRequest_data['orderID'] = response.orderID
-            selectedRequest_data['orderItem'] = response.order_item
-
-            // Truncate long product names
-            for (let i = 0; i < indexedArray.length; i++) {
-                if (indexedArray[i].length > 75) {
-                    indexedArray[i] = indexedArray[i].substring(0, 35) + "...";
+           
+            for (let i = 0; i < response.order_item.length; i++) {
+                if (response.order_item[i].itemName.length > 75) {
+                    response.order_item[i].itemName = response.order_item[i].itemName.substring(0, 35) + "...";
                 }
             }
 
@@ -105,8 +88,8 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
 
             // populate the data set
             let dataSet = [], total_subtotal = 0;
-            for (let i = 0; i < indexedArray.length; i++) {
-                let item = cartObject.order_item[i];
+            for (let i = 0; i < response.order_item.length; i++) {
+                let item = response.order_item[i];
 
                 // Remove "P" and commas, then convert to a float
                 let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
@@ -116,8 +99,9 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
                 let rowData = [
                     // `<img src="../images/${item.itemImage}" alt="item-image" class="img-fluid" style="width: 100px; height: 100px;" />`,
                     // item.itemID,
-                    `<span class='item-id-span' style='display:none;'>${item.itemID}</span>`,
-                    `<span class='item-name-span'>${indexedArray[i]}</span>`,
+                    `<span class='item-id-span'>${item.itemID}</span>`,
+                    `<span class='item-image-span'><img src="${response.order_item[i].itemImage}" alt="item-1-img"/></span>`,
+                    `<span class='item-name-span'>${response.order_item[i].itemName}</span>`,
                     `<span class='item-price-span'>${"P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
                     `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
                     `<span class="item-subtotal-span">${formattedPrice}</span>`
@@ -144,29 +128,32 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
                 "<span style='visibility:hidden;'>asdf</span> ",
                 "<span style='visibility:hidden;'>asdf</span> ",
                 `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
-                ""
+                "<span style='visibility:hidden;'>asdf</span> ",
+                "<span style='visibility:hidden;'>asdf</span> ",
             ]);
 
             let table_column = [
-                { title: "IMAGE", data: 0 },
-                { title: "PRODUCT", data: 1 },
-                { title: "PRICE", data: 2 },
-                { title: "QUANTITY", data: 3 },
-                { title: "SUBTOTAL", data: 4 },
+                { title: "ITEM ID", data:0},
+                { title: "IMAGE", data: 1 },
+                { title: "PRODUCT", data: 2 },
+                { title: "PRICE", data: 3 },
+                { title: "QUANTITY", data: 4 },
+                { title: "SUBTOTAL", data: 5 },
             ];
             
             let columnDefs = [
                 { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
-                { targets: 1, createdCell: function(td) { $(td).addClass('item-name-td'); } },
-                { targets: 2, createdCell: function(td) { $(td).addClass('item-price-td'); } },
-                { targets: 3, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
-                { targets: 4, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } }
+                { targets: 1, createdCell: function(td) { $(td).addClass('item-image-td'); } },
+                { targets: 2, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+                { targets: 3, createdCell: function(td) { $(td).addClass('item-price-td'); } },
+                { targets: 4, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
+                { targets: 5, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } }
             ];
             
             // 🔹 Add "ACTION" column **only if** order_status is "Pending"
             if (order_status === "Pending") {
-                table_column.push({ title: "ACTION", data: 5 });
-                columnDefs.push({ targets: 5, createdCell: function(td) { $(td).addClass('action-btn-td'); } });
+                table_column.push({ title: "ACTION", data: 6 });
+                columnDefs.push({ targets: 6, createdCell: function(td) { $(td).addClass('action-btn-td'); } });
                 document.getElementById("action-header").style.display = "table-cell"; // Show ACTION header
             }else{
 
@@ -188,133 +175,124 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
 }
 
 const dataTable_viewUpdate = (orderID, sectionName , history_update) =>{
-    $.ajax({
-        url: '../php/view_orderRequest.php',
-        method: "POST",
-        data : {
-            view_orderID : orderID
-        },
-        dataType : 'JSON',
-        success: function(response) {
-            console.log(response)
-            console.log(history_update)
+    let dataSet = []
+    for(let i = 0; i < history_update.length; i++){
+        console.log(history_update[i].updatedOrder)
+        console.log(history_update[i].previousOrder)
+        
+        let differences = [];
+        let updatedMap = new Map(history_update[i].updatedOrder.map(item => [String(item.itemID), item]));
 
-            let dataSet = []
-            for(let i = 0; i < history_update.length; i++){
-                console.log(history_update[i].updatedOrder)
-                console.log(history_update[i].previousOrder)
-                
-                let differences = [];
-                let updatedMap = new Map(history_update[i].updatedOrder.map(item => [String(item.itemID), item]));
+        // 🔹 Check for modified & removed items
+        history_update[i].previousOrder.forEach(prevItem => {
+            let updatedItem = updatedMap.get(String(prevItem.itemID));
 
-                // 🔹 Check for modified & removed items
-                history_update[i].previousOrder.forEach(prevItem => {
-                    let updatedItem = updatedMap.get(String(prevItem.itemID));
+            if (updatedItem) {
+                let prevQty = prevItem.itemQuantity.trim();
+                let updatedQty = updatedItem.itemQuantity.trim();
 
-                    if (updatedItem) {
-                        let prevQty = prevItem.itemQuantity.trim();
-                        let updatedQty = updatedItem.itemQuantity.trim();
-
-                        if (prevQty !== updatedQty) {
-                            differences.push({
-                                itemID: prevItem.itemID,
-                                changeType: "UPDATED",
-                                prevQuantity: prevQty,
-                                updatedQuantity: updatedQty,
-                                itemName: prevItem.itemName,
-                                itemPrice : prevItem.itemPrice
-                            });
-                        }
-                    } else {
-                        differences.push({
-                            itemID: prevItem.itemID,
-                            changeType: "REMOVED",
-                            prevQuantity: prevItem.itemQuantity,
-                            itemName: prevItem.itemName,
-                            itemPrice : prevItem.itemPrice
-                        });
-                    }
-                });
-
-                // 🔹 Check for newly added items
-                let previousMap = new Map(history_update[i].previousOrder.map(item => [String(item.itemID), item]));
-
-                history_update[i].updatedOrder.forEach(updatedItem => {
-                    if (!previousMap.has(String(updatedItem.itemID))) {
-                        differences.push({
-                            itemID: updatedItem.itemID,
-                            changeType: "ADDED",
-                            updatedQuantity: updatedItem.itemQuantity,
-                            itemName: updatedItem.itemName
-                        });
-                    }
-                });
-
-                console.log("differences: ", differences)
-
-                if ($.fn.DataTable.isDataTable('#cart-table-update')) {
-                    let table = $('#cart-table-update').DataTable();
-                    table.clear().destroy(); // Clear data and destroy instance
-                    $('#cart-table-update tbody').empty(); // Remove old table rows
+                if (prevQty !== updatedQty) {
+                    differences.push({
+                        itemID: prevItem.itemID,
+                        changeType: "UPDATED",
+                        prevQuantity: prevQty,
+                        updatedQuantity: updatedQty,
+                        itemName: prevItem.itemName,
+                        itemPrice : prevItem.itemPrice,
+                        itemImage : prevItem.itemImage,
+                    });
                 }
-
-                let style = ""
-                if(differences[0].changeType === 'UPDATED'){
-                    style = "padding:10px;border-radius:7px;background:#ffc108;"
-                }else{
-                    style = "padding:10px;border-radius:7px;background:#db3545;color:white;"
-                }
-
-                let cleanPrice = parseFloat(differences[0].itemPrice.replace(/P|\s|,/g, '')) * (differences[0].updatedQuantity ? differences[0].updatedQuantity : 0);
-                let formattedPrice = "P " + cleanPrice.toLocaleString();
-                dataSet.push([
-                    `<span class='item-id-span' style='display:none;'>${differences[0].itemID}</span>`,
-                    `<span class='item-last-update-span'>${history_update[i].dateEdited}</span>`,
-                    `<span class='item-image-span'> " " </span>`, 
-                    `<span class='item-name-span'>${differences[0].itemName}</span>`, 
-                    `<span class='item-price-span'>${differences[0].itemPrice}</span>`,
-                    `<input class='item-quantity-span' type='number' value='${differences[0].prevQuantity}' disabled />`,
-                    `<input class='item-quantity-span' type='number' value='${(differences[0].updatedQuantity) ? differences[0].updatedQuantity : 0}' disabled />`,
-                    `<span class="item-subtotal-span"> ${formattedPrice}</span>`, 
-                    `<span class="item-subtotal-span" style='${style}'> ${differences[0].changeType}</span>`, 
-                ]);
-
+            } else {
+                differences.push({
+                    itemID: prevItem.itemID,
+                    changeType: "REMOVED",
+                    prevQuantity: prevItem.itemQuantity,
+                    itemName: prevItem.itemName,
+                    itemPrice : prevItem.itemPrice,
+                    itemImage : prevItem.itemImage,
+                });
             }
+        });
 
+        // 🔹 Check for newly added items
+        let previousMap = new Map(history_update[i].previousOrder.map(item => [String(item.itemID), item]));
 
-            // dataSet.push([
-            //     "<span style='visibility:hidden;'>asdf</span> ",
-            //     "<span style='visibility:hidden;'>asdf</span> ",
-            //     "<span style='visibility:hidden;'>asdf</span> ",
-            //     "<span style='visibility:hidden;'>asdf</span> ",
-            //     `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
-            // ]);
+        history_update[i].updatedOrder.forEach(updatedItem => {
+            if (!previousMap.has(String(updatedItem.itemID))) {
+                differences.push({
+                    itemID: updatedItem.itemID,
+                    changeType: "ADDED",
+                    updatedQuantity: updatedItem.itemQuantity,
+                    itemName: updatedItem.itemName,
+                    itemImage : prevItem.itemImage
+                });
+            }
+        });
 
-            console.log(dataSet)
-            $('#cart-table-update').DataTable({
-                destroy: true, // Ensure reinitialization is allowed
-                data: dataSet,
-                columns: [
-                    { title: "ITEM ID", data:0, visible: false },
-                    { title: "LAST MODIFIED", data:1 },
-                    { title: "IMAGE", data:2 },
-                    { title: "PRODUCT", data:3 },
-                    { title: "PRICE", data:4 },
-                    { title: "QUANTITY BEFORE", data:5 },
-                    { title: "QUANTITY UPDATED", data:6 },
-                    { title: "SUBTOTAL", data:7 },
-                    { title: "ACTION", data:8 },
-                ]
-                
-                // "paging": false,
-                // "info": false,
-                // "ordering": false,
-                // "stripeClasses": []
-            });
-            // 
-            $('#modal-view-update #modal-title-incoming').text(`${sectionName} Request`)
+        console.log("differences: ", differences)
+
+        if ($.fn.DataTable.isDataTable('#cart-table-update')) {
+            let table = $('#cart-table-update').DataTable();
+            table.clear().destroy(); // Clear data and destroy instance
+            $('#cart-table-update tbody').empty(); // Remove old table rows
         }
+
+        let style = ""
+        if(differences[0].changeType === 'UPDATED'){
+            style = "padding:10px;border-radius:7px;background:#ffc108;"
+        }else{
+            style = "padding:10px;border-radius:7px;background:#db3545;color:white;"
+        }
+
+        let cleanPrice = parseFloat(differences[0].itemPrice.replace(/P|\s|,/g, '')) * (differences[0].updatedQuantity ? differences[0].updatedQuantity : 0);
+        let formattedPrice = "P " + cleanPrice.toLocaleString();
+        dataSet.push([
+            `<span class='item-id-span' style='display:none;'>${differences[0].itemID}</span>`,
+            `<span class='item-last-update-span'>${history_update[i].dateEdited}</span>`,
+            `<span class='item-image-span'> <img src='${differences[0].itemImage}' alt='item-image' /> </span>`, 
+            `<span class='item-name-span'>${differences[0].itemName}</span>`, 
+            `<span class='item-price-span'>${differences[0].itemPrice}</span>`,
+            `<input class='item-quantity-span' type='number' value='${differences[0].prevQuantity}' disabled />`,
+            `<input class='item-quantity-span' type='number' value='${(differences[0].updatedQuantity) ? differences[0].updatedQuantity : 0}' disabled />`,
+            `<span class="item-subtotal-span"> ${formattedPrice}</span>`, 
+            `<span class="item-subtotal-span" style='${style}'> ${differences[0].changeType}</span>`, 
+        ]);
+
+    }
+
+    $('#cart-table-update').DataTable({
+        destroy: true, // Ensure reinitialization is allowed
+        data: dataSet,
+        columns: [
+            { title: "ITEM ID", data:0, visible: false },
+            { title: "LAST MODIFIED", data:1 },
+            { title: "IMAGE", data:2 },
+            { title: "PRODUCT", data:3 },
+            { title: "PRICE", data:4 },
+            { title: "QUANTITY BEFORE", data:5 },
+            { title: "QUANTITY UPDATED", data:6 },
+            { title: "SUBTOTAL", data:7 },
+            { title: "ACTION", data:8 },
+        ],
+        columnDefs: [
+            { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
+            { targets: 1, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+            { targets: 2, createdCell: function(td) { $(td).addClass('item-image-td'); } },
+            { targets: 3, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+            { targets: 4, createdCell: function(td) { $(td).addClass('item-price-td'); } },
+            { targets: 5, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
+            { targets: 6, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } },
+            { targets: 7, createdCell: function(td) { $(td).addClass('action-btn-td'); } },
+        ]
+
+
+        // "paging": false,
+        // "info": false,
+        // "ordering": false,
+        // "stripeClasses": []
     });
+    // 
+    $('#modal-view-update #modal-title-incoming').text(`${sectionName} Request`)
 }
 
 
@@ -425,6 +403,7 @@ $(document).ready(function(){
 
     $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
         const index = $('.update-item-btn').index(this);
+        
         try {
             $.ajax({
                 url: '../php/update_pending_request.php',

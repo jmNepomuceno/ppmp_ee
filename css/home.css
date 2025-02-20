@@ -507,6 +507,10 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
     font-weight: 900;
 }
 
+#modal-place-order .modal-content #modal-body-incoming #cart-table thead tr th:nth-child(1){
+    display:none;
+}
+
 
 #modal-place-order .modal-content #modal-body-incoming #cart-table tbody tr:nth-child(even){
     background: #F2F2F2;
@@ -523,7 +527,14 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
 
 #modal-place-order .modal-content #modal-body-incoming #cart-table tbody tr .item-id-td{
     width: 10%;
+    display:none;
 }
+
+#modal-place-order #cart-table tbody tr .item-image-td .item-image-span img{    
+    width:150px;
+    height: 90px;
+}
+
 
 #modal-place-order .modal-content #modal-body-incoming #cart-table tbody tr .item-name-td{
     width: 30%;

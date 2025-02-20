@@ -4,6 +4,21 @@
     date_default_timezone_set('Asia/Manila');
 
     // print_r($_SESSION);
+    if($_SESSION['fetch_inventory'] == ""){
+        $sql = "SELECT * FROM imiss_inventory";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $item_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        for($i = 0; $i < count($item_data); $i++) {
+            if (isset($item_data[$i]['itemName']) && strlen($item_data[$i]['itemName']) > 75) {
+                $item_data[$i]['itemName'] = substr($item_data[$i]['itemName'], 0, 75) . "...";
+            }
+        }
+        $_SESSION['fetch_inventory'] = $item_data;
+    }
+
+    $item_data = $_SESSION['fetch_inventory'];
 ?>
 
 <!DOCTYPE html>
@@ -93,6 +108,7 @@
                     <table id="cart-table" class="display">
                         <thead>
                             <tr >
+                                <th>ITEM ID</th>
                                 <th>IMAGE</th>
                                 <th>PRODUCT</th>
                                 <th>PRICE</th>

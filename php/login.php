@@ -36,6 +36,7 @@ if ($canAccess == 1) {
         $_SESSION["password"] = $password;     
         $_SESSION["Authorized"] = "Yes";
         $_SESSION["role"] = "";
+        $_SESSION["fetch_inventory"] = "";
 
         $admin_bioID = [3374, 3858, 2514];
 

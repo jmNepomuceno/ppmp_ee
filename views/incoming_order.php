@@ -59,6 +59,7 @@
                     <table id="cart-table-request" class="display">
                         <thead>
                             <tr >
+                                <th>ITEM ID</th>
                                 <th>IMAGE</th>
                                 <th>PRODUCT</th>
                                 <th>PRICE</th>

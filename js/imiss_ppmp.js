@@ -1,6 +1,8 @@
 let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
 // modal_notif.show()
 
+let orderInformation = []
+
 const dataTable = () => {
     try
     {
@@ -73,6 +75,11 @@ const dataTable = () => {
                         `<span class="grand-total-span"> </span>`,
                         `<span class="grand-total-span"> </span>`,
                     ])
+
+                    if ($.fn.DataTable.isDataTable('#cart-table')) {
+                        $('#cart-table').DataTable().destroy();
+                        $('#cart-table tbody').empty(); // Clear previous table body
+                    }
 
                     let table = $('#cart-table').DataTable({
                         destroy: true,
@@ -164,7 +171,14 @@ const dataTable = () => {
                                         <button class="save-quantity-draft">Save</button>
                                     </li>
                                     <li><strong>Estimated Budget:</strong> ${item.itemEstimBudget}</li>
+                                    <li class="order-id-li"> ${item.orderID} </li>
                                     <hr>`;
+
+                                    orderInformation.push({
+                                        orderID : item.orderID,
+                                        itemID : item.itemID
+                                        // "item-quantity-draft"
+                                    })
                             }
                             sectionIndex++;
                         });
@@ -198,7 +212,7 @@ $(document).ready(function(){
 
     $(document).off('click', '.edit-quantity-draft').on('click', '.edit-quantity-draft', function() {      
         const index = $('.edit-quantity-draft').index(this);
-
+        
         // set all back to default
         for(let i = 0; i < $('.edit-quantity-draft').length; i++){
             $('.item-quantity-draft').eq(i).css('pointer-events' , 'none')
@@ -212,6 +226,48 @@ $(document).ready(function(){
 
         $('.save-quantity-draft').eq(index).css('visibility' , 'visible')
 
+
+        
     });
+
+    $(document).off('click', '.save-quantity-draft').on('click', '.save-quantity-draft', function() {      
+        const index = $('.save-quantity-draft').index(this);
+        console.log(index)
+        console.log(orderInformation[index])
+        console.log($('.item-quantity-draft').eq(index).val())
+
+        // function
+        // ppmp request
+        // request history
+        // imissppmp
+        try {
+            $.ajax({
+                url: '../php/edit_ppmp_draft.php',
+                method: "POST",
+                data: {
+                    orderID : orderInformation[index]['orderID'],
+                    itemID: orderInformation[index]['itemID'],
+                    itemQuantity: $('.item-quantity-draft').eq(index).val(),
+                },
+                // dataType : 'json',
+                success: function(response) {
+                    try { 
+                        console.log(response)
+                        dataTable()
+
+                        $('#modal-notif .modal-content .modal-header .modal-title-incoming').text("Successfully Edited")
+                        modal_notif.show()
+                    } catch (innerError) {
+                        console.error("Error processing response:", innerError);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("AJAX request failed:", error);
+                }
+            });
+        } catch (ajaxError) {
+            console.error("Unexpected error occurred:", ajaxError);
+        }
+    })
 });
 
