@@ -297,7 +297,6 @@ $(document).ready(function(){
     $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
         const index = $('.update-item-btn').index(this);
 
-
         try {
             $.ajax({
                 url: '../php/updateCart.php',
@@ -310,7 +309,7 @@ $(document).ready(function(){
                 success: function(response) {
                     console.log(response)
                     try {
-                        // dataTable()
+                        dataTable()
                         checkCurrentCart()
                         $('#modal-notif #modal-title-incoming').text("Successfully edited.")
                         modal_notif.show()

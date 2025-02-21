@@ -1,6 +1,7 @@
 <?php
 // include $_SERVER['DOCUMENT_ROOT'].'.\session.php';
 session_start();
+
 $webservice = "http://192.168.42.10:8081/EmpPortal.asmx?wsdl";
 
 if (isset($_POST["username"]) && isset($_POST["password"]) && trim($_POST["username"]) != "" && $_POST["password"] != "") {
@@ -17,66 +18,49 @@ if (isset($_POST["username"]) && isset($_POST["password"]) && trim($_POST["usern
     // var_dump($result);
     // echo '</pre>';
 
-$code = $result->Code;
-$canAccess = $result->CanAccess;
-$errorMessage = $result->Message;
-$userType = $result->UserType;
+    $code = $result->Code;
+    $canAccess = $result->CanAccess;
+    $errorMessage = $result->Message;
+    $userType = $result->UserType;
 
 
-if ($canAccess == 1) {
-    if (isset($result->Account)) {
-        $account = $result->Account;
-        $name = $account->FirstName." ".substr($account->MiddleName,0,1).". ".$account->LastName;
+    if ($canAccess == 1) {
+        if (isset($result->Account)) {
+            $account = $result->Account;
+            $name = $account->FirstName." ".substr($account->MiddleName,0,1).". ".$account->LastName;
 
-        $_SESSION["user"] = $account->BiometricID;          
-        $_SESSION["name"] = $account->FullName;
-        $_SESSION["section"] = $account->Section;
-        $_SESSION["sectionName"] = "";
-        $_SESSION["division"] = $account->Division; 
-        $_SESSION["password"] = $password;     
-        $_SESSION["Authorized"] = "Yes";
-        $_SESSION["role"] = "";
-        $_SESSION["fetch_inventory"] = "";
+            $_SESSION["user"] = $account->BiometricID;          
+            $_SESSION["name"] = $account->FullName;
+            $_SESSION["section"] = $account->Section;
+            $_SESSION["sectionName"] = "";
+            $_SESSION["division"] = $account->Division; 
+            $_SESSION["password"] = $password;     
+            $_SESSION["Authorized"] = "Yes";
+            $_SESSION["role"] = "";
+            $_SESSION["fetch_inventory"] = "";
 
-        $admin_bioID = [3374, 3858, 2514];
+            $admin_bioID = [3374, 3858, 2514];
 
-        if(in_array($_SESSION["user"], $admin_bioID)){
-            $_SESSION["role"] = 'admin';
-        }else{
-            $_SESSION["role"] = "user";
+            if(in_array($_SESSION["user"], $admin_bioID)){
+                $_SESSION["role"] = 'admin';
+            }else{
+                $_SESSION["role"] = "user";
+            }
+
+            echo "/views/home.php";
         }
-
-        echo "/views/home.php";
-
-        // include 'config.php';
-
-        //     $pdo = new PDO("sqlsrv:Server=$host;Database=$dbname", $user, $password);
-        //     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        //     if (isset($_SESSION["user"])) {
-        //         $bioIDToCheck = $_SESSION["user"];
-                
-        //         $countQuery = "SELECT COUNT(*) AS rowCounts FROM dbo.Admin WHERE bioID = :bioID";
-        //         $stmtCount = $pdo->prepare($countQuery);
-        //         $stmtCount->bindParam(':bioID', $bioIDToCheck);
-        //         $stmtCount->execute();
-        //         $rowCountResult = $stmtCount->fetch(PDO::FETCH_ASSOC);
-
-        //         if ($rowCountResult['rowCounts'] > 0) {
-        //             $_SESSION["Admin"] = 1;
-        //         } else {
-        //             $_SESSION["Admin"] = 0;
-        //         }
-        //     }
-
     }
+    else {
+        // Store error in session and redirect
+        header("location: ../php/login.php");
+        // exit();
+        echo "rest";
+    }
+
 }
 else {
-    header("location:../../Login.php?error=".$code);
-}
-
-}else {
-    header("location:../../Login.php?error=999");
+    header("location: ../php/login.php");
+    // exit();
 }
 
 

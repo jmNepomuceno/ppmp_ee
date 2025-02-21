@@ -177,6 +177,7 @@ $(document).ready(function(){
         const orderID = $('.view-request-span').eq(index).attr('id')
         const sectionName = $('.request-section-span').eq(index).attr('id')
         incoming_orderID_clicked = orderID
+        incoming_sectionName_clicked = sectionName
         modal_viewRequest.show(
             dataTable_viewRequest(orderID, sectionName)
         )
@@ -266,13 +267,9 @@ $(document).ready(function(){
                 },
                 success: function(response) {
                     try {
+                        dataTable_viewRequest(incoming_orderID_clicked, incoming_sectionName_clicked)
                         $('#modal-notif .modal-content .modal-header .modal-title-incoming').text("Successfully Updated")
                         modal_notif.show()
-                        // console.log(response)
-                        // const orderID = $('.view-request-span').eq(index).attr('id')
-                        // const sectionName = $('.request-section-span').eq(index).attr('id')
-                        // dataTable_viewRequest(orderID, sectionName)
-
                     } catch (innerError) {
                         console.error("Error processing response:", innerError);
                     }

@@ -207,8 +207,41 @@ const dataTable = () => {
     }
 }
 
+const exportExcel = () => {
+    try {
+        fetch("../template_2.xlsx") // Make sure the file is in your server directory
+        .then(response => response.arrayBuffer())
+        .then(data => {
+            let workbook = XLSX.read(data, { type: "array" });
+            let worksheet = workbook.Sheets[workbook.SheetNames[0]]; // Get first sheet
+
+            let table = $('#cart-table').DataTable();
+            let rowIndex = 17; // Start inserting data at row A17
+
+            // Get table rows and insert into Excel
+            table.rows().every(function () {
+                let colIndex = 0;
+                $(this.node()).find("td").each(function () {
+                    let cellAddress = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+                    worksheet[cellAddress] = { t: "s", v: $(this).text().trim() };
+                    colIndex++;
+                });
+                rowIndex++; // Move to next row
+            });
+
+            // Save and export the modified file
+            XLSX.writeFile(workbook, "Updated_Template.xlsx");
+        })
+    } catch (error) {
+        console.error("❌ Error generating Excel file:", error);
+    }
+};
+
+
 $(document).ready(function(){
     dataTable();
+    // Attach event listener
+    $(document).on("click", "#exportExcelBtn", exportExcel)
 
     $(document).off('click', '.edit-quantity-draft').on('click', '.edit-quantity-draft', function() {      
         const index = $('.edit-quantity-draft').index(this);

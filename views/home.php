@@ -75,7 +75,7 @@
                         <?php echo $item_data[$i]['itemName']; ?> 
                         <span style="display:none" class="item-id"><?php echo $item_data[$i]['itemID']; ?></span>
                     </p>
-                    <span class="item-price">P 80,000.00</span>
+                    <span class="item-price"><?php echo "P " . number_format($item_data[$i]['itemPrice'], 2, '.', ','); ?></span>
                     
                     <div class="function-div">
                         <div class="add-div">
