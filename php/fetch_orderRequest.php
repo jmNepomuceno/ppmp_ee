@@ -3,11 +3,18 @@ session_start();
 include('../assets/connection/sqlconnection.php');
 date_default_timezone_set('Asia/Manila');
 
+$filter = $_POST['filter'];
 
 try {
-    $sql = "SELECT * FROM ppmp_request WHERE order_status='Pending'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    if($filter == 'All'){
+        $sql = "SELECT * FROM ppmp_request";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+    }else{
+        $sql = "SELECT * FROM ppmp_request WHERE order_status=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$filter]);
+    }
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     for($i = 0; $i < count($data); $i++){

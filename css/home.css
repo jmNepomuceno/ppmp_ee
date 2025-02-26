@@ -340,6 +340,7 @@ body .right-container .inventory-div .tiles-div img{
     height: 150px;
     margin-top:10px;
     background: #D9D9D9;
+    mix-blend-mode: multiply;
 }
 
 
@@ -402,9 +403,15 @@ body .right-container .inventory-div .tiles-div .function-div .add-div{
 
 body .right-container .inventory-div .tiles-div .function-div .add-div .current-total-span{
     text-decoration: underline;
-    font-size: 1.45rem;
+    font-size: 1.35rem;
     color:white;
-}
+    background: none;
+    width: 40px;
+    height: 100%;
+    text-align: center;
+    border:none;
+    outline:none;
+} 
 
 body .right-container .inventory-div .tiles-div .function-div .add-div .add-btn,
 body .right-container .inventory-div .tiles-div .function-div .add-div .minus-btn{
@@ -491,8 +498,9 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
 
 #modal-place-order .modal-content #modal-body-incoming{
     width: 95%;
-    height: auto;
+    height: 600px;
     margin-top:15px;
+    overflow: scroll;
 }
 
 #modal-place-order .modal-content #modal-body-incoming #cart-table{
@@ -646,7 +654,7 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
     }
 
     body .right-container .inventory-div .tiles-div .function-div .add-div .current-total-span{
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     body .right-container .inventory-div .tiles-div .function-div .add-div .add-btn,

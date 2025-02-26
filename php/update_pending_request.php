@@ -49,13 +49,23 @@
 
 
         // print_r($current_cart);
-
-        $sql = "UPDATE ppmp_request SET order_item=? WHERE orderID=?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([
-            json_encode($current_cart['order_item']), // Store as JSON
-            $orderID,
-        ]);
+        if(count($current_cart['order_item']) == 0){
+            // $sql = "DELETE FROM ppmp_request WHERE orderID=?";
+            // $stmt = $pdo->prepare($sql);
+            // $stmt->execute([$orderID]);
+            
+            $todo = ($_POST['from'] == 'admin') ? 'Rejected' : 'Cancelled';
+            $sql = "UPDATE ppmp_request SET order_status=? WHERE orderID=?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$todo, $orderID]);
+        }else{
+            $sql = "UPDATE ppmp_request SET order_item=? WHERE orderID=?";
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([
+                json_encode($current_cart['order_item']), // Store as JSON
+                $orderID,
+            ]);
+        }
 
         // insert request history
         $historyID = "";
@@ -74,7 +84,6 @@
         }
 
         // $edit_by = ($_SESSION['role'] == 'admin') ? 'admin' : ;
-
         $sql = "INSERT INTO request_history (historyID, orderID, previousOrder, updatedOrder, dateEdited, edit_by) 
         VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($sql);

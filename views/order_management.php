@@ -28,8 +28,11 @@
             <table id="cart-table" class="display">
                 <div class="filter-div">
                     <span id="filter-span-text">Filter: </span>
-                    <button id="rejected-btn">Rejected</button>
+                    <button id="pending-btn">Pending</button>
                     <button id="approved-btn">Approved</button>
+                    <button id="rejected-btn">Rejected</button>
+                    <button id="cancelled-btn">Cancelled</button>
+                    <button id="all-btn">All</button>
                 </div>
                 
                 <thead>

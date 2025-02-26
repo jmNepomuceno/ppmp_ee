@@ -45,15 +45,21 @@ try {
 
 
     // print_r($current_cart);
+    if(count($current_cart['cart']) == 0){
+        $sql = "DELETE FROM user_cart WHERE bioID=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$_SESSION["user"]]);
+    }
+    else{
+        $sql = "UPDATE user_cart SET cart=? WHERE bioID=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            json_encode($current_cart['cart']), // Store as JSON
+            $_SESSION["user"],
+        ]);
+    }
 
-    $sql = "UPDATE user_cart SET cart=? WHERE bioID=?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        json_encode($current_cart['cart']), // Store as JSON
-        $_SESSION["user"],
-    ]);
-
-    echo "success";
+    echo json_encode($current_cart['cart']);
 } catch (PDOException $e) {
     echo json_encode(["error" => $e->getMessage()]);
 }

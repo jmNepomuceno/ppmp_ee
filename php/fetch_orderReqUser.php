@@ -3,13 +3,22 @@ session_start();
 include('../assets/connection/sqlconnection.php');
 date_default_timezone_set('Asia/Manila');
 
+$filter = $_POST['filter'];
 
 try {
-    $sql = "SELECT * FROM ppmp_request WHERE order_by=?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([(int)$_SESSION['user']]);
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if($filter == 'All'){
+        $sql = "SELECT * FROM ppmp_request WHERE order_by=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([(int)$_SESSION['user']]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    }else{
+        $sql = "SELECT * FROM ppmp_request WHERE order_by=? AND order_status=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([(int)$_SESSION['user'] , $filter]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
     for ($i = 0; $i < count($data); $i++) {
         $data[$i]['order_item'] = !empty($data[$i]['order_item']) ? json_decode($data[$i]['order_item'], true) : [];
 

@@ -15,6 +15,11 @@ const dataTable = () => {
                 const filteredData = response.filteredData
                 const rawData = response.rawData
                 const sectionData = response.section
+                
+                filteredData.sort((a, b) => {
+                    return a.itemID - b.itemID; // Sort numerically based on itemID
+                });
+
                 try {
                     let dataSet = [];
                     let grand_total = 0;

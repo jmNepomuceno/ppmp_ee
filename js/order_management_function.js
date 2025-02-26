@@ -7,22 +7,37 @@ let modal_imiss_update = new bootstrap.Modal(document.getElementById('modal-view
 let selectedRequest_data = {}
 let incoming_orderID_clicked = ""
 let history_update_response = {}
-const dataTable = () =>{
+let orig_quantity_before_update_user = []
+
+const dataTable = (filter) =>{
     try {
         $.ajax({
             url: '../php/fetch_orderReqUser.php',
-            method: "GET",
+            method: "POST",
+            data : {
+                filter : filter
+            },
             dataType : "json",
             success: function(response) {
                 console.log(response)
                 try {
                     let dataSet = [];
+                    
                     for(let i = 0; i < response.length; i++){
                         let imiss_update = (response[i].history_update.length > 0) ? "VIEW" : "NONE"
+                        let status_style = "";
+                        if(response[i].order_status === "Pending"){
+                            status_style = "background:#ffcc33;"
+                        }else if(response[i].order_status === "Approved"){
+                            status_style = "background:#5bd778";
+                        }else if(response[i].order_status === "Cancelled" || response[i].order_status === "Rejected"){
+                            status_style = "background:#e05260;"
+                        }
+
                         dataSet.push([
                             `<span>${i + 1}</span>`,
                             `<span>${response[i].order_date}</span>`,
-                            `<span class="request-section-span" id="${response[i].order_by_sectionName}">${response[i].order_status}</span>`,
+                            `<span class="request-section-span" id="${response[i].order_by_sectionName}" style="${status_style}">${response[i].order_status}</span>`,
                             `<span class='view-request-span' id='${response[i].orderID}'> VIEW </span>`,
                             `<span class='imiss-update-span'> ${imiss_update} </span>`,
                         ])
@@ -30,6 +45,12 @@ const dataTable = () =>{
                         history_update_response[i] = response[i].history_update
                     }  
                     console.log(dataSet)
+
+                    if ($.fn.DataTable.isDataTable('#cart-table')) {
+                        $('#cart-table').DataTable().destroy();
+                        $('#cart-table tbody').empty(); // Clear previous table body
+                        
+                    }
 
                     $('#cart-table').DataTable({
                         data: dataSet,
@@ -71,110 +92,135 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
         dataType : 'JSON',
         success: function(response) {
             console.log(response)
+            
+            if(response != false){
+                let order_status = ""
 
-            let order_status = ""
-
-           
-            for (let i = 0; i < response.order_item.length; i++) {
-                if (response.order_item[i].itemName.length > 75) {
-                    response.order_item[i].itemName = response.order_item[i].itemName.substring(0, 35) + "...";
+                for (let i = 0; i < response.order_item.length; i++) {
+                    if (response.order_item[i].itemName.length > 75) {
+                        response.order_item[i].itemName = response.order_item[i].itemName.substring(0, 35) + "...";
+                    }
                 }
-            }
 
-            if ($.fn.DataTable.isDataTable('#cart-table-request')) {
-                $('#cart-table-request').DataTable().destroy();
-                $('#cart-table-request tbody').empty(); // Clear previous table body
-            }
+                if ($.fn.DataTable.isDataTable('#cart-table-request')) {
+                    $('#cart-table-request').DataTable().destroy();
+                    $('#cart-table-request tbody').empty(); // Clear previous table body
+                }
 
-            // populate the data set
-            let dataSet = [], total_subtotal = 0;
-            for (let i = 0; i < response.order_item.length; i++) {
-                let item = response.order_item[i];
+                // populate the data set
+                let dataSet = [], total_subtotal = 0;
 
-                // Remove "P" and commas, then convert to a float
-                let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
-                let formattedPrice = "P " + cleanPrice.toLocaleString();
-                total_subtotal += cleanPrice;
+                for (let i = 0; i < response.order_item.length; i++) {
+                // for (let i = response.order_item.length - 1; i >= 0; i--) {
+                    let item = response.order_item[i];
 
-                let rowData = [
-                    // `<img src="../images/${item.itemImage}" alt="item-image" class="img-fluid" style="width: 100px; height: 100px;" />`,
-                    // item.itemID,
-                    `<span class='item-id-span'>${item.itemID}</span>`,
-                    `<span class='item-image-span'><img src="${response.order_item[i].itemImage}" alt="item-1-img"/></span>`,
-                    `<span class='item-name-span'>${response.order_item[i].itemName}</span>`,
-                    `<span class='item-price-span'>${"P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
-                    `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
-                    `<span class="item-subtotal-span">${formattedPrice}</span>`
+                    // Remove "P" and commas, then convert to a float
+                    let cleanPrice = parseFloat(item.itemPrice.replace(/P|\s|,/g, '')) * parseInt(item.itemQuantity);
+                    let formattedPrice = "P " + cleanPrice.toLocaleString();
+                    total_subtotal += cleanPrice;
+
+                    orig_quantity_before_update_user.push(parseInt(item.itemQuantity))
+                    let rowData = [
+                        // `<img src="../images/${item.itemImage}" alt="item-image" class="img-fluid" style="width: 100px; height: 100px;" />`,
+                        // item.itemID,
+                        `<span class='item-id-span'>${item.itemID}</span>`,
+                        `<span class='item-image-span'><img src="${item.itemImage}" alt="item-1-img"/></span>`,
+                        `<span class='item-name-span'>${item.itemName}</span>`,
+                        `<span class='item-price-span'>${"P " + parseFloat(item.itemPrice.replace(/P|\s|,/g, '')).toLocaleString()}</span>`,
+                        `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
+                        `<span class="item-subtotal-span">${formattedPrice}</span>`
+                    ];
+                    console.log(response.order_status)
+                    
+                    if (response.order_status === "Pending") {
+                        order_status = "Pending"
+                        rowData.push(`
+                            <div class="action-btn-div"> 
+                                <button class='btn btn-danger remove-item-btn'>Cancel</button>
+                                <button class='btn btn-success update-item-btn'>Update</button>
+                            </div>
+                        `);
+                    }
+                    else if (response.order_status === "Cancelled") {
+                        order_status = "Cancelled"
+                        rowData.push(`
+                            <span class="item-subtotal-span">Cancelled</span>
+                        `);
+                    }
+                    
+                    dataSet.push(rowData);
+                }
+                
+
+                dataSet.push([
+                    "<span style='visibility:hidden;'>asdf</span> ",
+                    "<span style='visibility:hidden;'>asdf</span> ",
+                    "<span style='visibility:hidden;'>asdf</span> ",
+                    "<span style='visibility:hidden;'>asdf</span> ",
+                    `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
+                    "<span style='visibility:hidden;'>asdf</span> ",
+                    "<span style='visibility:hidden;'>asdf</span> ",
+                ]);
+
+                console.log(dataSet)
+
+
+                let table_column = [
+                    { title: "ITEM ID", data:0},
+                    { title: "IMAGE", data: 1 },
+                    { title: "PRODUCT", data: 2 },
+                    { title: "PRICE", data: 3 },
+                    { title: "QUANTITY", data: 4 },
+                    { title: "SUBTOTAL", data: 5 },
                 ];
-                console.log(response.order_status)
                 
-                if (response.order_status === "Pending") {
-                    order_status = "Pending"
-                    rowData.push(`
-                        <div class="action-btn-div"> 
-                            <button class='btn btn-danger remove-item-btn'>Reject</button>
-                            <button class='btn btn-success update-item-btn'>Update</button>
-                        </div>
-                    `);
+                let columnDefs = [
+                    { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
+                    { targets: 1, createdCell: function(td) { $(td).addClass('item-image-td'); } },
+                    { targets: 2, createdCell: function(td) { $(td).addClass('item-name-td'); } },
+                    { targets: 3, createdCell: function(td) { $(td).addClass('item-price-td'); } },
+                    { targets: 4, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
+                    { targets: 5, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } }
+                ];
+                
+                // 🔹 Add "ACTION" column **only if** order_status is "Pending"
+                if (order_status === "Pending") {
+                    table_column.push({ title: "ACTION", data: 6 });
+                    columnDefs.push({ targets: 6, createdCell: function(td) { $(td).addClass('action-btn-td'); } });
+                    document.getElementById("action-header").style.display = "table-cell"; // Show ACTION header
+                }
+                else if (order_status === "Cancelled") {
+                    table_column.push({ title: "ACTION", data: 6 });
+                    columnDefs.push({ targets: 6, createdCell: function(td) { $(td).addClass('action-btn-td'); } });
+                    document.getElementById("action-header").style.display = "table-cell"; // Show ACTION header
                 }
                 
-                dataSet.push(rowData);
+                $('#cart-table-request').DataTable({
+                    data: dataSet,
+                    columns: table_column,
+                    columnDefs: columnDefs
+                    // "paging": false,
+                    // "info": false,
+                    // "ordering": false,
+                    // "stripeClasses": []
+                });
+                
+                $('#modal-view-request #modal-title-incoming').text(`${sectionName} Request`)
+            }
+            else{
+                if ($.fn.DataTable.isDataTable('#cart-table-request')) {
+                    $('#cart-table-request').DataTable().destroy();
+                    $('#cart-table-request tbody').empty(); // Clear previous table body
+                    dataTable("Pending")
+                }
             }
             
-
-            dataSet.push([
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-                `<span class="total-subtotal-span">P ${total_subtotal.toLocaleString()}</span>`,
-                "<span style='visibility:hidden;'>asdf</span> ",
-                "<span style='visibility:hidden;'>asdf</span> ",
-            ]);
-
-            let table_column = [
-                { title: "ITEM ID", data:0},
-                { title: "IMAGE", data: 1 },
-                { title: "PRODUCT", data: 2 },
-                { title: "PRICE", data: 3 },
-                { title: "QUANTITY", data: 4 },
-                { title: "SUBTOTAL", data: 5 },
-            ];
-            
-            let columnDefs = [
-                { targets: 0, createdCell: function(td) { $(td).addClass('item-id-td'); } },
-                { targets: 1, createdCell: function(td) { $(td).addClass('item-image-td'); } },
-                { targets: 2, createdCell: function(td) { $(td).addClass('item-name-td'); } },
-                { targets: 3, createdCell: function(td) { $(td).addClass('item-price-td'); } },
-                { targets: 4, createdCell: function(td) { $(td).addClass('item-quantity-td'); } },
-                { targets: 5, createdCell: function(td) { $(td).addClass('item-subtotal-td'); } }
-            ];
-            
-            // 🔹 Add "ACTION" column **only if** order_status is "Pending"
-            if (order_status === "Pending") {
-                table_column.push({ title: "ACTION", data: 6 });
-                columnDefs.push({ targets: 6, createdCell: function(td) { $(td).addClass('action-btn-td'); } });
-                document.getElementById("action-header").style.display = "table-cell"; // Show ACTION header
-            }else{
-
-            }
-            
-            $('#cart-table-request').DataTable({
-                data: dataSet,
-                columns: table_column,
-                columnDefs: columnDefs
-                // "paging": false,
-                // "info": false,
-                // "ordering": false,
-                // "stripeClasses": []
-            });
-            
-            $('#modal-view-request #modal-title-incoming').text(`${sectionName} Request`)
         }
     });
 }
 
 const dataTable_viewUpdate = (orderID, sectionName , history_update) =>{
+    console.log(history_update)
     let dataSet = []
     for(let i = 0; i < history_update.length; i++){
         console.log(history_update[i].updatedOrder)
@@ -188,8 +234,8 @@ const dataTable_viewUpdate = (orderID, sectionName , history_update) =>{
             let updatedItem = updatedMap.get(String(prevItem.itemID));
 
             if (updatedItem) {
-                let prevQty = prevItem.itemQuantity.trim();
-                let updatedQty = updatedItem.itemQuantity.trim();
+                let prevQty = prevItem.itemQuantity;
+                let updatedQty = updatedItem.itemQuantity;
 
                 if (prevQty !== updatedQty) {
                     differences.push({
@@ -298,7 +344,7 @@ const dataTable_viewUpdate = (orderID, sectionName , history_update) =>{
 
 
 $(document).ready(function(){
-    dataTable()
+    dataTable("Pending")
 
     $('#inventory-list-sub-div').click(function(){
         window.location.href = "../views/home.php";
@@ -390,15 +436,20 @@ $(document).ready(function(){
         // }
     }) 
 
-    $(document).off('change input', '.item-quantity-span').on('change input', '.item-quantity-span', function() {        
+    $(document).off('change', '.item-quantity-span').on('change', '.item-quantity-span', function() {        
         const index = $('.item-quantity-span').index(this);
-        
+
         if (parseInt($(this).val()) < 1 || $(this).val() === '') {
             $(this).val(1); // Reset to 0 if negative
         }
 
-        $('.update-item-btn').eq(index).css('opacity', '1');
-        $('.update-item-btn').eq(index).css('pointer-events', 'auto');
+        if($('.item-quantity-span').eq(index).val() != orig_quantity_before_update_user[index]){
+            $('.update-item-btn').eq(index).css('opacity', '1');
+            $('.update-item-btn').eq(index).css('pointer-events', 'auto');
+        }else{
+            $('.update-item-btn').eq(index).css('opacity', '0.3');
+            $('.update-item-btn').eq(index).css('pointer-events', 'none');
+        }
     });
 
     $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
@@ -412,7 +463,8 @@ $(document).ready(function(){
                     orderID : incoming_orderID_clicked,
                     itemID: $('.item-id-span').eq(index).text(),
                     itemQuantity: $('.item-quantity-span').eq(index).val(),
-                    action : "update"
+                    action : "update",
+                    from : "user"
                 },
                 success: function(response) {
                     try {
@@ -446,7 +498,8 @@ $(document).ready(function(){
                     orderID : incoming_orderID_clicked,
                     itemID: $('.item-id-span').eq(index).text(),
                     itemQuantity: $('.item-quantity-span').eq(index).val(),
-                    action : "delete"
+                    action : "delete",
+                    from : "user"
                 },
                 success: function(response) {
                     try {
@@ -469,4 +522,28 @@ $(document).ready(function(){
         }
     });
 
+    // close-modal-btn-incoming
+    // $(document).off('click', '#close-modal-btn-incoming').on('click', '#close-modal-btn-incoming', function() {        
+    //     dataTable("Pending")
+    // });
+
+    $(document).off('click', '#pending-btn').on('click', '#pending-btn', function() {        
+        dataTable("Pending")
+    });
+
+    $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {        
+        dataTable("Approved")
+    });
+
+    $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {        
+        dataTable("Rejected")
+    });
+
+    $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {        
+        dataTable("Cancelled")
+    });
+
+    $(document).off('click', '#all-btn').on('click', '#all-btn', function() {        
+        dataTable("All")
+    });
 })

@@ -36,7 +36,7 @@
 
             <div class="side-bar-routes" id="order-management-sub-div">
                 <i class="fa-solid fa-box"></i>
-                <span>Order Management</span>
+                <span>Request Status</span>
             </div>
 
             <?php if ($permissions['admin_function'] != false) { ?>
@@ -53,6 +53,11 @@
                 <div class="side-bar-routes" id="imiss-ppmp-sub-div">
                     <i class="fa-solid fa-box"></i>
                     <span>IMISS PPMP</span>
+                </div>
+
+                <div class="side-bar-routes" id="item-distribution-sub-div">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Item Distribution</span>
                 </div>
             <?php } ?>
 

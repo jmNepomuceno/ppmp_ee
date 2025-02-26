@@ -35,6 +35,10 @@ $(document).ready(function(){
         window.location.href = "../views/imiss_ppmp.php";
     });
 
+    $('#item-distribution-sub-div').click(function(){
+        window.location.href = "../views/item_distribution.php";
+    });
+
     $('#logout-btn').click(function(){
         $.ajax({
             url: '../php/logout.php',

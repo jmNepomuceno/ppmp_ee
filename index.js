@@ -14,8 +14,8 @@ $(document).ready(function(){
                 password: password_input
             },
             success: function(response) {
-                console.log(response)
-                // window.location.href = response;
+                // console.log(response)
+                window.location.href = response;
             }
         });
     }

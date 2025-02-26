@@ -202,16 +202,23 @@ body .right-container .table-div .filter-div button{
     width:70px;
 }
 
-body .right-container .table-div .filter-div #rejected-btn{
+body .right-container .table-div .filter-div button{
     background: #ba3a13; 
     color:white;
-    /* db3545 */
+    font-weight: 600;
+    opacity: 0.5;
 }
 
-body .right-container .table-div .filter-div #approved-btn{
-    background: #ba3a13; 
-    color:white;
+body .right-container .table-div .filter-div #pending-btn{
+    background: #ba3a13;
+    opacity: 1;
 }
+
+body .right-container .table-div .filter-div button:hover{
+    background: #e95b2f;
+    opacity: 1;
+}
+
 
 body .right-container .table-div #cart-table{
     width: 100%;
@@ -227,6 +234,12 @@ body .right-container .table-div #cart-table thead tr{
 
 body .right-container .table-div #cart-table thead tr th{
     text-align: center;
+}
+
+body .right-container .table-div #cart-table tbody tr td .request-section-span{
+    padding:5px;
+    font-weight: 600;
+    border-radius: 5px;
 }
 
 body .right-container .table-div #cart-table tbody tr td .view-request-span,
@@ -292,8 +305,9 @@ body .right-container .table-div #cart-table tbody tr td .imiss-update-span:hove
 #modal-view-request .modal-content #modal-body-incoming,
 #modal-view-update .modal-content #modal-body-incoming{
     width: 95%;
-    height: auto;
+    height: 600px;
     margin-top:15px;
+    overflow: scroll;
 }
 
 #modal-view-request #cart-table-request,

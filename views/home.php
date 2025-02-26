@@ -54,7 +54,7 @@
                 <img id="item-img-animation" src="../source/inventory_image/item_1.png" alt="item-1-img">
                 <span id="notif-value">0</span>
                 <!-- <img id="cart-icon" src="../source/home_css/cart.png" alt="cart-icon" data-bs-toggle="modal" data-bs-target="#modal-place-order"> -->
-                <i class="fa-solid fa-cart-shopping" id="cart-icon" data-bs-toggle="modal" data-bs-target="#modal-place-order"></i>
+                <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
             </div>
         </div>
 
@@ -80,7 +80,8 @@
                     <div class="function-div">
                         <div class="add-div">
                             <button class="minus-btn">-</button>
-                            <span class="current-total-span">0</span>
+                            <!-- <span class="current-total-span">0</span> -->
+                            <input type="text" class="current-total-span" value="0">
                             <button class="add-btn">+</button>
                         </div>
                         <button class="add-to-cart-btn">Add to Cart</button>

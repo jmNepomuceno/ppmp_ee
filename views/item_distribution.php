@@ -17,7 +17,7 @@
 </head>
 <body>
     <?php 
-        $view = "incoming-order-sub-div";
+        $view = "item-distribution-sub-div";
         include("./sidebar.php")
     ?>
 
