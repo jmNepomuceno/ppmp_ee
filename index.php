@@ -45,10 +45,26 @@
             <input type="password" class="credential-inputs" id="password-txt" placeholder="Password" autocomplete="off">
         </div>
 
+        <h6>No account yet? <a id="sign-up-a" href="http://192.168.42.10:8085/">Sign Up</a></h6>
+
         <button id="login-btn">LOGIN</button>
     </div>
 
-
+    <div class="modal fade" id="modal-notif" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-top" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="modal-title-incoming" class="modal-title-incoming" id="exampleModalLabel">Successfully Updated</h5>
+                </div>
+                <div id="modal-body-incoming" class="modal-body-incoming ml-2">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button id="close-modal-btn-incoming" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <?php require "./links/script_links.php" ?>
     <script type="text/javascript" src="./index.js"></script>

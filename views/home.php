@@ -3,6 +3,12 @@
     include('../assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');
 
+    $allowed_roles = ["admin" , "user"];
+
+    if (!in_array($_SESSION["role"], $allowed_roles)) {
+        header("Location: ../views/home.php"); // Redirect unauthorized users
+        exit();
+    }
     // print_r($_SESSION);
     if($_SESSION['fetch_inventory'] == ""){
         $sql = "SELECT * FROM imiss_inventory";
@@ -46,13 +52,13 @@
 
         <div class="function-bar">
             <div class="search-bar">
-                <input type="text" id="search-input" />
+                <input type="text" id="search-input" autocomplete="off"/>
                 <button id="search-btn">Search</button>
             </div>
             
             <div class="cart-div">
                 <img id="item-img-animation" src="../source/inventory_image/item_1.png" alt="item-1-img">
-                <span id="notif-value">0</span>
+                <span id="notif-value"></span>
                 <!-- <img id="cart-icon" src="../source/home_css/cart.png" alt="cart-icon" data-bs-toggle="modal" data-bs-target="#modal-place-order"> -->
                 <i class="fa-solid fa-cart-shopping" id="cart-icon"></i>
             </div>
@@ -65,7 +71,7 @@
                 if (!empty($itemImageData)) {
                     $imageSrc = 'data:image/jpeg;base64,' . base64_encode($itemImageData);
                 } else {
-                    $imageSrc = 'path/to/default-image.jpg'; // Provide a default image path
+                    $imageSrc = '../source/inventory_image/item_1.png'; // Provide a default image path
                 }
             ?>
                 <div class="tiles-div item-tile" data-index="<?php echo $i; ?>" style="display: none;">
@@ -88,6 +94,8 @@
                     </div>
                 </div>
             <?php } ?>
+
+            
         </div>
 
 

@@ -1,5 +1,7 @@
 $(document).ready(function(){
     // Function to handle login
+    let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
+
     function handleLogin() {
         const username_input = $('#username-txt').val();
         const password_input = $('#password-txt').val();
@@ -14,8 +16,12 @@ $(document).ready(function(){
                 password: password_input
             },
             success: function(response) {
-                // console.log(response)
-                window.location.href = response;
+                if(response === "invalid") {
+                    $('#modal-notif .modal-content .modal-header .modal-title-incoming').text("Invalid Credentials")
+                    modal_notif.show()
+                }else{
+                    window.location.href = response;
+                }
             }
         });
     }

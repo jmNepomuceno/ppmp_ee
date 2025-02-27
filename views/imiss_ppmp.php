@@ -3,6 +3,11 @@
     include('../assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');
     
+    $allowed_roles = ["admin"];
+    if (!in_array($_SESSION["role"], $allowed_roles)) {
+        header("Location: ../views/home.php"); // Redirect unauthorized users
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +16,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="../css/imiss_ppmp.css">
     <?php require "../links/header_link.php" ?>
 </head>

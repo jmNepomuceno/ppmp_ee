@@ -214,7 +214,7 @@ const dataTable = () => {
 
 const exportExcel = () => {
     try {
-        fetch("../template_2.xlsx") // Make sure the file is in your server directory
+        fetch("../ppmp_draft_template_2.xlsx") // Make sure the file is in your server directory
         .then(response => response.arrayBuffer())
         .then(data => {
             let workbook = XLSX.read(data, { type: "array" });

@@ -6,6 +6,7 @@ let incoming_orderID_clicked = ""
 let orig_quantity_before_update_user = []
 
 const dataTable = (filter) =>{
+    console.log(filter)
     try {
         $.ajax({
             url: '../php/fetch_orderRequest.php',

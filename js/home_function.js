@@ -2,6 +2,8 @@ let modal_placeorder = new bootstrap.Modal(document.getElementById('modal-place-
 let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
 // modal_placeorder.show()
 
+
+
 const dataTable = () =>{
     $.ajax({
         url: '../php/checkCurrentCart.php',
@@ -88,10 +90,7 @@ const dataTable = () =>{
             });
         }
     });
-
-    
 }
-
 const checkCurrentCart = () =>{
     $.ajax({
         url: '../php/checkCurrentCart.php',
@@ -107,7 +106,8 @@ const checkCurrentCart = () =>{
             if(total_current_addCart > 0){
                 $('#notif-value').css('display' , 'block')
                 $('#notif-value').text(total_current_addCart)
-            }else{
+            }
+            else{
                 $('#notif-value').css('display' , 'none')
                 $('#notif-value').text(0)
             }
@@ -190,7 +190,7 @@ let paginationInstance = pagination();
 $(document).ready(function(){
     // dataTable()
     checkCurrentCart()
-
+    
     $('.add-btn').click(function(){
         const index = $(this).index('.add-btn'); 
         let current_total = parseInt($('.current-total-span').eq(index).val()) + 1;
@@ -200,6 +200,7 @@ $(document).ready(function(){
             $('.add-to-cart-btn').eq(index).css('opacity', '1');
             $('.add-to-cart-btn').eq(index).css('pointer-events', 'auto');
         }
+
     });
 
     $('.minus-btn').click(function(){
@@ -339,6 +340,7 @@ $(document).ready(function(){
         }else{
             modal_placeorder.show()
             dataTable()
+
         }
     });
 
@@ -467,6 +469,7 @@ $(document).ready(function(){
         let searchInput = $('#search-input').val().toLowerCase();
     
         if (searchInput !== "") {
+            let instance = 0;
             $('.item-tile').each(function() {
                 var itemName = $(this).find('.item-description').text().toLowerCase();
     
@@ -475,8 +478,15 @@ $(document).ready(function(){
                     $(this).removeClass("hidden-item");
                 } else {
                     $(this).addClass("hidden-item");
+                    instance++;
                 }
             });
+
+            if(instance === 170){
+                $('#modal-notif #modal-title-incoming').text("No item found.")
+                modal_notif.show()
+            }
+
         } else {
             $(".item-tile").removeClass("hidden-item"); // Show all items if search is empty
         }
@@ -489,4 +499,12 @@ $(document).ready(function(){
             $('#search-btn').click();
         }
     });
+
+    // if user click backspace and the value of the search-input is 0, show all items
+    $('#search-input').on('keyup', function(e) {
+        if (e.key === "Backspace" && $(this).val().length === 0) {
+            $(".item-tile").removeClass("hidden-item");
+            paginationInstance.showPage(1);
+        }
+    })
 })

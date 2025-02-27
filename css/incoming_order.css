@@ -5,6 +5,40 @@
     font-family: Arial, sans-serif;
 }
 
+#bell-notif {
+    color: yellow !important;
+    font-size: 1.5rem !important;
+    animation: ring 1s infinite ease-in-out;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+}
+
+/* Hide by default */
+.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease-in-out;
+}
+
+@keyframes ring {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes fade {
+    0% { opacity: 1; }
+    100% { opacity: 0.5; }
+
+}
+
 ::-webkit-scrollbar {
     width: 8px; 
 }
@@ -421,6 +455,6 @@ body .right-container .table-div .table-container #cart-table tbody tr td .span-
 
 @media only screen and (max-height: 800px){
     body .right-container .table-div .table-container{
-        height: 400px;
+        height: 450px;
     }
 }

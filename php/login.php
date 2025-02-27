@@ -52,15 +52,17 @@ if (isset($_POST["username"]) && isset($_POST["password"]) && trim($_POST["usern
     }
     else {
         // Store error in session and redirect
-        header("location: ../php/login.php");
+        // header("location: ../php/login.php");
         // exit();
-        echo "rest";
+        echo "invalid";
     }
 
 }
 else {
-    header("location: ../php/login.php");
+    // header("location: ../php/login.php");
     // exit();
+    // echo "<script>alert('Invalid username or password. Please try again.'); window.location.href = '../php/login.php';</script>";
+    echo "invalid";
 }
 
 

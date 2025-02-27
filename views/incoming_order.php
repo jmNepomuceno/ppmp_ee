@@ -3,6 +3,14 @@
     include('../assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');
     
+    $allowed_roles = ["admin"];
+    if (!in_array($_SESSION["role"], $allowed_roles)) {
+        if (!in_array($_SESSION["role"], $allowed_roles)) {
+            die("<h2>Access Denied</h2><p>You do not have permission to access this page.</p>");
+        }
+        header("Location: ../views/home.php");
+
+    }
 ?>
 
 <!DOCTYPE html>

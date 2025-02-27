@@ -3,6 +3,11 @@
     include('../assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');
     
+    $allowed_roles = ["admin" , "user"];
+    if (!in_array($_SESSION["role"], $allowed_roles)) {
+        header("Location: ../views/home.php"); // Redirect unauthorized users
+        
+    }
 ?>
 
 <!DOCTYPE html>
@@ -25,30 +30,33 @@
     <div class="right-container">
         <h1>Order Request Dashboard</h1>
         <div class="table-div">
-            <table id="cart-table" class="display">
-                <div class="filter-div">
-                    <span id="filter-span-text">Filter: </span>
-                    <button id="pending-btn">Pending</button>
-                    <button id="approved-btn">Approved</button>
-                    <button id="rejected-btn">Rejected</button>
-                    <button id="cancelled-btn">Cancelled</button>
-                    <button id="all-btn">All</button>
-                </div>
-                
-                <thead>
-                    <tr >
-                        <th>REQUEST NO.</th>
-                        <th>DATE</th>
-                        <th>STATUS</th>
-                        <th>REQUEST ITEM</th>
-                        <th>IMISS Update</th>
-                    </tr>
-                </thead>
+            <div class="table-container">
+                <table id="cart-table" class="display">
+                    <div class="filter-div">
+                        <span id="filter-span-text">Filter: </span>
+                        <button class="filter-buttons" id="pending-btn">Pending</button>
+                        <button class="filter-buttons" id="approved-btn">Approved</button>
+                        <button class="filter-buttons" id="rejected-btn">Rejected</button>
+                        <button class="filter-buttons" id="cancelled-btn">Cancelled</button>
+                        <button class="filter-buttons" id="all-btn">All</button>
+                    </div>
+                    
+                    <thead>
+                        <tr >
+                            <th>REQUEST NO.</th>
+                            <th>DATE</th>
+                            <th>STATUS</th>
+                            <th>REQUEST ITEM</th>
+                            <th>IMISS Update</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                   
-                </tbody>
-            </table>
+                    <tbody>
+                    
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 

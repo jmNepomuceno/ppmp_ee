@@ -527,23 +527,60 @@ $(document).ready(function(){
     //     dataTable("Pending")
     // });
 
-    $(document).off('click', '#pending-btn').on('click', '#pending-btn', function() {        
+    $(document).off('click', '#pending-btn').on('click', '#pending-btn', function() {
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#pending-btn').css('background' , '#ba3a13')
+        $('#pending-btn').css('opacity' , '1')
+
         dataTable("Pending")
     });
 
-    $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {        
+    $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {      
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#approved-btn').css('background' , '#ba3a13')
+        $('#approved-btn').css('opacity' , '1')
+
         dataTable("Approved")
     });
 
-    $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {        
+    $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {  
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#rejected-btn').css('background' , '#ba3a13')
+        $('#rejected-btn').css('opacity' , '1')      
         dataTable("Rejected")
     });
 
-    $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {        
+    $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {    
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#cancelled-btn').css('background' , '#ba3a13')
+        $('#cancelled-btn').css('opacity' , '1')    
         dataTable("Cancelled")
     });
 
-    $(document).off('click', '#all-btn').on('click', '#all-btn', function() {        
+    $(document).off('click', '#all-btn').on('click', '#all-btn', function() {      
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#all-btn').css('background' , '#ba3a13')
+        $('#all-btn').css('opacity' , '1')      
         dataTable("All")
     });
 })
