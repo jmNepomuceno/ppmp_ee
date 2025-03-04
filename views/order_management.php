@@ -26,6 +26,7 @@
         include("./sidebar.php")
     ?>
 
+    <i class="fa-solid fa-bars" id="burger-icon"></i>
 
     <div class="right-container">
         <h1>Order Request Dashboard</h1>
@@ -94,6 +95,7 @@
                         </tbody>
                     </table>
                 </div>
+
                 <div class="modal-footer">
                     <button id="close-modal-btn-incoming" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
                 </div>
@@ -136,6 +138,11 @@
                         </tbody>
                     </table>
                 </div>
+                
+                <div class="remarks-div">
+                    <textarea name="" id="remark-textarea" placeholder="Remarks/Comment"></textarea>
+                </div>
+
                 <div class="modal-footer">
                     <button id="close-modal-btn-incoming" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
                 </div>
@@ -164,6 +171,9 @@
     <script> 
         var section = "<?php echo $section ?>";
     </script>
+    <!-- <script src="../js-obf/home_traverse-obf.js?v=<?php echo time(); ?>"></script>
+    <script src="../js-obf/order_management_function-obf.js?v=<?php echo time(); ?>"></script> -->
+
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>
     <script src="../js/order_management_function.js?v=<?php echo time(); ?>"></script>
 </body>

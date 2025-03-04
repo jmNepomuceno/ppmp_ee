@@ -23,6 +23,10 @@ $(document).ready(function(){
         window.location.href = "../views/order_management.php";
     });
 
+    $('#incoming-item-sub-div').click(function(){
+        window.location.href = "../views/incoming_item.php";
+    });
+
     $('#imiss-inventory-sub-div').click(function(){
         // window.location.href = "../views/imiss_inventory.php";
     });
@@ -49,4 +53,15 @@ $(document).ready(function(){
             }
         });
     });
+
+    $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {
+        if($('#burger-icon').css('color') != 'rgb(255, 85, 33)'){
+            $('body .left-container').css('display', 'none');
+            $('#burger-icon').css('color', '#ff5521');
+        }else{
+            $('body .left-container').css('display', 'flex');
+            $('#burger-icon').css('color', 'white');
+        }
+    });
+
 })

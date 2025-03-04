@@ -59,6 +59,10 @@ body{
     align-items: center;
 }
 
+#burger-icon{
+    display: none;
+}
+
 body .left-container{
     width: 17%;
     height: 100vh;
@@ -445,6 +449,29 @@ body .right-container .table-div #cart-table tbody tr td .imiss-update-span:hove
 
 }
 
+#modal-view-update .remarks-div{
+    width:100%;
+    height: 70px;
+
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top:5px;
+    margin-bottom:5px;
+
+    pointer-events: none;
+}
+
+#modal-view-update .remarks-div textarea{
+    width: 50%;
+    height: 100%;
+    outline:none;
+    resize: none;
+    border:2px solid #8c8c8c;
+    border-radius: 5px;
+}
+
 /*  */
 #modal-view-request .modal-content .modal-footer,
 #modal-view-update .modal-content .modal-footer{
@@ -485,8 +512,85 @@ body .right-container .table-div #cart-table tbody tr td .imiss-update-span:hove
     font-size: 0.8rem;
 }
 
+@media only screen and (max-width: 480px){
+    body{
+        position:relative;
+    }
+
+    #burger-icon{
+        display: block;
+        position:absolute;
+        top:2%;
+        left:5%;
+
+        color:#ff5521;
+        font-size: 2rem;
+        z-index: 2000;
+    }
+
+    body .left-container{
+        display:none;
+        position:absolute;
+        top:0;
+        left:0;
+        width: 300px;
+        height: 100%;
+        z-index: 1000;
+    }
+
+    body .right-container{
+        width: 100%;
+        height: 100vh;
+    }
+    
+    body .right-container .function-bar .search-bar input{
+        width: 80%;
+    }
+    
+    body .right-container .function-bar .search-bar button{
+        width: 20%;
+        font-size: 0.8rem;
+    }
+    
+    body .right-container .function-bar .cart-div{
+        margin-right:5%;
+    }
+    
+    body .right-container .inventory-div{
+        width: 100%;
+        height: 90%;
+        overflow: scroll;
+    }
+
+    .pagination-controls{
+        height: 50px !important;
+    }
+
+    .pagination-controls button, .pagination-controls span {
+        padding: 2px 6px;
+    }
+
+    body .right-container .function-bar #burger-icon{
+        display: block;
+        color:#ff5521;
+        font-size: 2rem;
+        margin-left:10px;
+        z-index: 2000;
+    }
+
+    body .right-container .table-div .table-container{
+        overflow-x: scroll;
+    }
+}
+
+
 @media only screen and (max-height: 800px){
     body .right-container .table-div .table-container{
+        height: 500px;
+    }
+
+    #modal-view-request .modal-content #modal-body-incoming,
+    #modal-view-update .modal-content #modal-body-incoming{
         height: 500px;
     }
 }

@@ -36,6 +36,12 @@
                 <i class="fa-solid fa-box"></i>
                 <span>Request Status</span>
             </div>
+
+            <div class="side-bar-routes" id="incoming-item-sub-div">
+                <i class="fa-solid fa-box"></i>
+                <span>Incoming Item</span>
+            </div>
+
             <?php if ($permissions['admin_function'] != false) { ?>
                 <div class="side-bar-routes" id="incoming-order-sub-div">
                     <i class="fa-solid fa-box"></i>
@@ -50,7 +56,7 @@
 
                 <div class="side-bar-routes" id="imiss-ppmp-sub-div">
                     <i class="fa-solid fa-box"></i>
-                    <span>IMISS PPMP</span>
+                    <span>IMISS PPMP Draft</span>
                 </div>
 
                 <div class="side-bar-routes" id="item-distribution-sub-div">

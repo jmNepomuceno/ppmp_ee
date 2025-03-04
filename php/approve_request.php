@@ -34,11 +34,11 @@ try {
 }
 
 $orderID = $_POST['orderID'];
-
+$remarks = $_POST['remarks'];
 try {
-    $sql = "UPDATE ppmp_request SET order_status='Approved' WHERE orderID=?";
+    $sql = "UPDATE ppmp_request SET order_status='Approved', order_remarks=? WHERE orderID=?";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([$orderID]);
+    $stmt->execute([$remarks, $orderID]);
 
     $sql = "SELECT * FROM ppmp_request WHERE order_status='Pending'";
     $stmt = $pdo->prepare($sql);

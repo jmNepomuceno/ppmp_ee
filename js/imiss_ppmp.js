@@ -307,5 +307,15 @@ $(document).ready(function(){
             console.error("Unexpected error occurred:", ajaxError);
         }
     })
+
+    $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {
+        if($('#burger-icon').css('color') != 'rgb(255, 85, 33)'){
+            $('body .left-container').css('display', 'none');
+            $('#burger-icon').css('color', '#ff5521');
+        }else{
+            $('body .left-container').css('display', 'flex');
+            $('#burger-icon').css('color', 'white');
+        }
+    });
 });
 

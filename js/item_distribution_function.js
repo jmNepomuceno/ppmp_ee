@@ -4,7 +4,10 @@ const dataTable = () =>{
     try {
         $.ajax({
             url: '../php/fetch_ppmp_distribution.php',
-            method: "GET",
+            method: "POST",
+            data : {
+                "todo" : "general"
+            },
             dataType : "json",
             success: function(response) {
                 console.log(response)
@@ -141,5 +144,13 @@ $(document).ready(function(){
     // $(document).off('click', '#close-modal-btn-incoming').on('click', '#close-modal-btn-incoming', function() {        
     //     dataTable("Pending")
     // });
-
+    $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {
+        if($('#burger-icon').css('color') != 'rgb(255, 85, 33)'){
+            $('body .left-container').css('display', 'none');
+            $('#burger-icon').css('color', '#ff5521');
+        }else{
+            $('body .left-container').css('display', 'flex');
+            $('#burger-icon').css('color', 'white');
+        }
+    });
 })

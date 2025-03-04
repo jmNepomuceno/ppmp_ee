@@ -3,20 +3,42 @@ session_start();
 include('../assets/connection/sqlconnection.php');
 date_default_timezone_set('Asia/Manila');
 
+$todo = $_POST['todo'];
 
 try {
     // Fetch all necessary data with JOINs to avoid multiple queries
-    $sql = "
-        SELECT 
-            f.*, 
-            pr.order_by_section, 
-            s.sectionName
-        FROM imiss_ppmp_finaldraft f
-        LEFT JOIN ppmp_request pr ON f.orderID = pr.orderID
-        LEFT JOIN pgssection s ON pr.order_by_section = s.sectionID
-    ";
+    if ($todo == 'general') {
+        $sql = "
+            SELECT 
+                f.*, 
+                pr.order_by_section, 
+                s.sectionName
+            FROM imiss_ppmp_finaldraft f
+            LEFT JOIN ppmp_request pr ON f.orderID = pr.orderID 
+            LEFT JOIN pgssection s ON pr.order_by_section = s.sectionID
+        ";
+    } else {
+        $sql = "
+            SELECT 
+                f.*, 
+                pr.order_by_section, 
+                s.sectionName
+            FROM imiss_ppmp_finaldraft f
+            LEFT JOIN ppmp_request pr ON f.orderID = pr.orderID 
+            LEFT JOIN pgssection s ON pr.order_by_section = s.sectionID
+            WHERE pr.order_by_section = :section
+        ";
+    }
     
+    // Prepare statement
     $stmt = $pdo->prepare($sql);
+    
+    // Bind parameter only for the `else` case
+    if ($todo !== 'general') {
+        $stmt->bindParam(':section', $_SESSION['section'], PDO::PARAM_STR);
+    }
+    
+    // Execute and fetch data
     $stmt->execute();
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

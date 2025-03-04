@@ -25,7 +25,7 @@ $(document).ready(function(){
             }
         });
     }
-
+    
     // Trigger login on button click
     $('#login-btn').click(function() {
         handleLogin();

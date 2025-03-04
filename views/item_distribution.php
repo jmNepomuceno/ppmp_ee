@@ -5,8 +5,11 @@
     
     $allowed_roles = ["admin"];
     if (!in_array($_SESSION["role"], $allowed_roles)) {
-        header("Location: ../views/home.php"); // Redirect unauthorized users
-        exit();
+        if (!in_array($_SESSION["role"], $allowed_roles)) {
+            die("<h2>Access Denied</h2><p>You do not have permission to access this page.</p>");
+        }
+        header("Location: ../views/home.php");
+
     }
 ?>
 
@@ -26,6 +29,7 @@
         include("./sidebar.php")
     ?>
 
+    <i class="fa-solid fa-bars" id="burger-icon"></i>
 
     <div class="right-container">
         <h1>PPMP Distribution</h1>
@@ -69,6 +73,9 @@
     <script> 
         var section = "<?php echo $section ?>";
     </script>
+    <!-- <script src="../js-obf/home_traverse-obf.js?v=<?php echo time(); ?>"></script>
+    <script src="../js-obf/item_distribution_function-obf.js?v=<?php echo time(); ?>"></script> -->
+
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>
     <script src="../js/item_distribution_function.js?v=<?php echo time(); ?>"></script>
 </body>

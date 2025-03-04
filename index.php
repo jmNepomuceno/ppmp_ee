@@ -1,4 +1,6 @@
 <?php 
+    session_name('PPMPee_Session');
+    session_save_path("C:\\Windows\\PPMP_sessions\\");
     session_start();
     include('./assets/connection/sqlconnection.php');
     date_default_timezone_set('Asia/Manila');

@@ -8,6 +8,7 @@ let selectedRequest_data = {}
 let incoming_orderID_clicked = ""
 let history_update_response = {}
 let orig_quantity_before_update_user = []
+let remarks_arr = []
 
 const dataTable = (filter) =>{
     try {
@@ -43,6 +44,7 @@ const dataTable = (filter) =>{
                         ])
 
                         history_update_response[i] = response[i].history_update
+                        remarks_arr.push(response[i].order_remarks)
                     }  
                     console.log(dataSet)
 
@@ -219,8 +221,9 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
     });
 }
 
-const dataTable_viewUpdate = (orderID, sectionName , history_update) =>{
+const dataTable_viewUpdate = (orderID, sectionName , history_update, remarks) =>{
     console.log(history_update)
+    console.log(remarks_arr)
     let dataSet = []
     for(let i = 0; i < history_update.length; i++){
         console.log(history_update[i].updatedOrder)
@@ -339,6 +342,7 @@ const dataTable_viewUpdate = (orderID, sectionName , history_update) =>{
     });
     // 
     $('#modal-view-update #modal-title-incoming').text(`${sectionName} Request`)
+    $('#remark-textarea').val((remarks) ? remarks : "No Remarks")
 }
 
 
@@ -379,7 +383,7 @@ $(document).ready(function(){
         const sectionName = $('.request-section-span').eq(index).attr('id')
         incoming_orderID_clicked = orderID
         modal_imiss_update.show(
-            dataTable_viewUpdate(orderID, sectionName, history_update_response[index])
+            dataTable_viewUpdate(orderID, sectionName, history_update_response[index], remarks_arr[index])  
         )
     });
 
@@ -582,5 +586,15 @@ $(document).ready(function(){
         $('#all-btn').css('background' , '#ba3a13')
         $('#all-btn').css('opacity' , '1')      
         dataTable("All")
+    });
+
+    $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {
+        if($('#burger-icon').css('color') != 'rgb(255, 85, 33)'){
+            $('body .left-container').css('display', 'none');
+            $('#burger-icon').css('color', '#ff5521');
+        }else{
+            $('body .left-container').css('display', 'flex');
+            $('#burger-icon').css('color', 'white');
+        }
     });
 })

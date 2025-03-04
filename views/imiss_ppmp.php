@@ -5,9 +5,14 @@
     
     $allowed_roles = ["admin"];
     if (!in_array($_SESSION["role"], $allowed_roles)) {
-        header("Location: ../views/home.php"); // Redirect unauthorized users
-        exit();
+        if (!in_array($_SESSION["role"], $allowed_roles)) {
+            die("<h2>Access Denied</h2><p>You do not have permission to access this page.</p>");
+        }
+        header("Location: ../views/home.php");
+
     }
+
+    
 ?>
 
 <!DOCTYPE html>
@@ -25,6 +30,8 @@
         include("./sidebar.php")
     ?>
 
+
+<i class="fa-solid fa-bars" id="burger-icon"></i>
 
     <div class="right-container">
         <h1>IMISS PPMP Draft</h1>
@@ -66,7 +73,10 @@
                 </tbody>
             </table>
         </div>
-        <button id="exportExcelBtn" class="btn btn-success">Export to Excel</button>
+        <div class="function-btns-div">
+            <button id="exportExcelBtn" class="btn btn-success">Export to Excel</button>
+            <button id="deleteAll" class="btn btn-danger">Remove All</button>
+        </div>
     </div>
 
 
@@ -90,6 +100,9 @@
     <script> 
         var section = "<?php echo $section ?>";
     </script>
+    <!-- <script src="../js-obf/home_traverse-obf.js?v=<?php echo time(); ?>"></script>
+    <script src="../js-obf/imiss_ppmp-obf.js?v=<?php echo time(); ?>"></script> -->
+
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>
     <script src="../js/imiss_ppmp.js?v=<?php echo time(); ?>"></script>
 </body>

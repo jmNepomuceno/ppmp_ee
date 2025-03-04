@@ -30,11 +30,11 @@
     ?>
 
 
+    <i class="fa-solid fa-bars" id="burger-icon"></i>
     <div class="right-container">
         <h1>Incoming PPMP Request</h1>
         <div class="table-div">
             <div class="filter-div">
-                <span id="filter-span-text">Filter: </span>
                 <span id="filter-span-text">Filter: </span>
                 <button id="pending-btn">Pending</button>
                 <button id="approved-btn">Approved</button>
@@ -95,6 +95,10 @@
                             </tr> -->
                         </tbody>
                     </table>
+
+                </div>
+                <div class="remarks-div">
+                    <textarea name="" id="remark-textarea" placeholder="Remarks/Comment"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button id="close-modal-btn-incoming" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
@@ -125,6 +129,9 @@
     <script> 
         var section = "<?php echo $section ?>";
     </script>
+    <!-- <script src="../js-obf/home_traverse-obf.js?v=<?php echo time(); ?>"></script>
+    <script src="../js-obf/incoming_order_function-obf.js?v=<?php echo time(); ?>"></script> -->
+    
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>
     <script src="../js/incoming_order_function.js?v=<?php echo time(); ?>"></script>
 </body>

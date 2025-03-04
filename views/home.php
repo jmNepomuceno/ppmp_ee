@@ -49,8 +49,8 @@
     ?>
 
     <div class="right-container">
-
         <div class="function-bar">
+            <i class="fa-solid fa-bars" id="burger-icon"></i>
             <div class="search-bar">
                 <input type="text" id="search-input" autocomplete="off"/>
                 <button id="search-btn">Search</button>
@@ -174,9 +174,11 @@
         var totalPages = <?php echo $total_pages; ?>;
         
     </script>
+    <!-- <script src="../js-obf/home_traverse-obf.js?v=<?php echo time(); ?>"></script>
+    <script src="../js-obf/home_function-obf.js?v=<?php echo time(); ?>"></script> -->
+                
     <script src="../js/home_traverse.js?v=<?php echo time(); ?>"></script>
     <script src="../js/home_function.js?v=<?php echo time(); ?>"></script>
-                
 </body>
 </html>
  
