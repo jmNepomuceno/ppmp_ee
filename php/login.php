@@ -1,6 +1,6 @@
 <?php
-// include $_SERVER['DOCUMENT_ROOT'].'.\session.php';
-session_start();
+include ('../session.php');
+include('../assets/connection/sqlconnection.php');
 
 $webservice = "http://192.168.42.10:8081/EmpPortal.asmx?wsdl";
 

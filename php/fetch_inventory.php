@@ -1,7 +1,6 @@
 <?php 
-    session_start();
+    include ('../session.php');
     include('../assets/connection/sqlconnection.php');
-    date_default_timezone_set('Asia/Manila');
 
 
     $sql = "SELECT * FROM imiss_inventory";

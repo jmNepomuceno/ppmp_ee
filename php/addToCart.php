@@ -1,7 +1,6 @@
 <?php
-session_start();
-include('../assets/connection/sqlconnection.php');
-date_default_timezone_set('Asia/Manila');
+    include ('../session.php');
+    include('../assets/connection/sqlconnection.php');
 
 if (isset($_POST['data'])) {
     $cart = json_decode($_POST['data'], true); // Convert JSON string to PHP array

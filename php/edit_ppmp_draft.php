@@ -1,7 +1,6 @@
 <?php
-    session_start();
+    include ('../session.php');
     include('../assets/connection/sqlconnection.php');
-    date_default_timezone_set('Asia/Manila');
 
     $orderID = $_POST['orderID'];
     $itemID = (int)$_POST['itemID']; 

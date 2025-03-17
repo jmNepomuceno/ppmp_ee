@@ -1,6 +1,7 @@
 <?php
 // Start the session
-session_start();
+include ('../session.php');
+include('../assets/connection/sqlconnection.php');
 
 // Unset all session variables
 $_SESSION = [];
