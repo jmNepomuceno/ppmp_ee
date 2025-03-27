@@ -20,6 +20,7 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="../css/incoming_order.css">
+
     <?php require "../links/header_link.php" ?>
 </head>
 <body>
@@ -35,11 +36,11 @@
         <div class="table-div">
             <div class="filter-div">
                 <span id="filter-span-text">Filter: </span>
-                <button id="pending-btn">Pending</button>
-                <button id="approved-btn">Approved</button>
-                <button id="rejected-btn">Rejected</button>
-                <button id="cancelled-btn">Cancelled</button>
-                <button id="all-btn">All</button>
+                <button class="filter-buttons" id="pending-btn">Pending</button>
+                <button class="filter-buttons" id="approved-btn">Approved</button>
+                <button class="filter-buttons" id="rejected-btn">Rejected</button>
+                <button class="filter-buttons" id="cancelled-btn">Cancelled</button>
+                <button class="filter-buttons" id="all-btn">All</button>
             </div>
             <div class="table-container">
                 <table id="cart-table" class="display">
@@ -123,6 +124,7 @@
             </div>
         </div>
     </div>
+
 
     <?php require "../links/script_links.php" ?>
     <script> 

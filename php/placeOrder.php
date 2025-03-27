@@ -2,6 +2,9 @@
 include ('../session.php');
 include('../assets/connection/sqlconnection.php');
 
+require "../vendor/autoload.php";  // Ensure Composer's autoload is included
+use WebSocket\Client;
+
 $date = date('Y-m-d H:i:s');
 
 try {
@@ -55,6 +58,11 @@ try {
     $sql = "UPDATE user_cart SET cart=NULL WHERE bioID=?";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$_SESSION["user"]]);
+
+    
+    $client = new Client("ws://192.168.42.222:8081");
+    $client->send(json_encode(["action" => "refreshIncomingOrder"]));
+    $client->send(json_encode(["action" => "refreshSideBar"]));
 
 } catch (PDOException $e) {
     echo json_encode(["error" => $e->getMessage()]);

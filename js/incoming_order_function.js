@@ -6,7 +6,6 @@ let incoming_orderID_clicked = ""
 let orig_quantity_before_update_user = []
 
 const dataTable = (filter) =>{
-    console.log(filter)
     try {
         $.ajax({
             url: '../php/fetch_orderRequest.php',
@@ -16,7 +15,6 @@ const dataTable = (filter) =>{
             },
             dataType : "json",
             success: function(response) {
-                console.log(response)
                 try {
                     let dataSet = [];
 
@@ -40,7 +38,6 @@ const dataTable = (filter) =>{
                             `<span class='span-status-incoming' style="${status_style}"> ${response[i].order_status} </span>`,
                         ])
                     }  
-                    console.log(dataSet)
 
                     if ($.fn.DataTable.isDataTable('#cart-table')) {
                         $('#cart-table').DataTable().destroy();
@@ -95,7 +92,6 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
         },
         dataType : 'JSON',
         success: function(response) {
-            console.log(response)
 
             if(response != false){
                 selectedRequest_data['orderID'] = response.orderID
@@ -168,7 +164,6 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
 
                 ]);
 
-                console.log(dataSet)
                 $('#cart-table-request').DataTable({
                     data: dataSet,
                     columns: [
@@ -208,6 +203,28 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
     });
 }
 
+
+// socket.onmessage = function(event) {
+//     let data = JSON.parse(event.data);
+//     console.log("Received from WebSocket:", data); // Debugging
+
+//     // Check if the action matches any of the relevant events
+//     if (data.action === "refreshIncomingOrder") {
+//         dataTable("Pending")
+
+//     } else {
+//         console.log("Unknown action:", data.action);
+//     }
+// };
+
+document.addEventListener("websocketMessage", function(event) {
+    let data = event.detail;
+
+    if (data.action === "refreshIncomingOrder") {
+        dataTable("Pending")
+    }
+});
+
 $(document).ready(function(){
     dataTable("Pending")
 
@@ -216,14 +233,19 @@ $(document).ready(function(){
     });
 
     $('#logout-btn').click(function(){
-        $.ajax({
-            url: '../php/logout.php',
-            method: "GET",
-            
-            success: function(response) {
-                window.location.href = response;
-            }
-        });
+        modal_logout.show()
+        
+
+        $(document).off('click', '#yes-modal-btn-logout').on('click', '#yes-modal-btn-logout', function() {
+            $.ajax({
+                url: '../php/logout.php',
+                method: "GET",
+                
+                success: function(response) {
+                    window.location.href = response;
+                }
+            });
+        })
     });
 
     $(document).off('click', '.view-request-span').on('click', '.view-request-span', function() {      
@@ -240,7 +262,6 @@ $(document).ready(function(){
     // approve-request-btn
     $(document).off('click', '#approve-request-btn').on('click', '#approve-request-btn', function() {    
         selectedRequest_data['remarks'] = $('#remark-textarea').val()
-        console.log(selectedRequest_data)
         try {
             $.ajax({
                 url: '../php/approve_request.php',
@@ -248,7 +269,6 @@ $(document).ready(function(){
                 method: "POST",
                 dataType : "json",
                 success: function(response) {
-                    console.log(response)
 
                     dataTable("Pending")
                     modal_viewRequest.hide()
@@ -285,12 +305,6 @@ $(document).ready(function(){
 
     $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
         const index = $('.update-item-btn').index(this);
-        // console.log({
-        //     orderID : incoming_orderID_clicked,
-        //     itemID: $('.item-id-span').eq(index).text(),
-        //     itemQuantity: $('.item-quantity-span').eq(index).val(),
-        //     action : "update"
-        // })
 
         try {
             $.ajax({
@@ -338,7 +352,6 @@ $(document).ready(function(){
                 // dataType : 'json',
                 success: function(response) {
                     try { 
-                        console.log(response)
                         const orderID = incoming_orderID_clicked
                         const sectionName = $('.request-section-span').eq(index).attr('id')
                         dataTable_viewRequest(orderID, sectionName)
@@ -362,24 +375,71 @@ $(document).ready(function(){
     //     dataTable("Pending")
     // });
 
-    $(document).off('click', '#pending-btn').on('click', '#pending-btn', function() {        
+    $(document).off('click', '#pending-btn').on('click', '#pending-btn', function() {
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#pending-btn').css('background' , '#ba3a13')
+        $('#pending-btn').css('opacity' , '1')
+
         dataTable("Pending")
     });
 
-    $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {        
+    $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {      
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#approved-btn').css('background' , '#ba3a13')
+        $('#approved-btn').css('opacity' , '1')
+
         dataTable("Approved")
     });
 
-    $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {        
+    $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {  
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#rejected-btn').css('background' , '#ba3a13')
+        $('#rejected-btn').css('opacity' , '1')      
         dataTable("Rejected")
     });
 
-    $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {        
+    $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {    
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#cancelled-btn').css('background' , '#ba3a13')
+        $('#cancelled-btn').css('opacity' , '1')    
         dataTable("Cancelled")
     });
 
-    $(document).off('click', '#all-btn').on('click', '#all-btn', function() {        
+    $(document).off('click', '#all-btn').on('click', '#all-btn', function() {      
+        for(let i = 0; i < $('.filter-buttons').length; i++){
+            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+            $('.filter-buttons').eq(i).css('opacity' , '0.5')
+        }
+
+        $('#all-btn').css('background' , '#ba3a13')
+        $('#all-btn').css('opacity' , '1')      
         dataTable("All")
+    });
+
+    $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {
+        if($('#burger-icon').css('color') != 'rgb(255, 85, 33)'){
+            $('body .left-container').css('display', 'none');
+            $('#burger-icon').css('color', '#ff5521');
+        }else{
+            $('body .left-container').css('display', 'flex');
+            $('#burger-icon').css('color', 'white');
+        }
     });
 
     $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {

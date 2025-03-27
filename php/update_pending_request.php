@@ -1,6 +1,9 @@
 <?php
-include ('../session.php');
-include('../assets/connection/sqlconnection.php');
+    include ('../session.php');
+    include('../assets/connection/sqlconnection.php');
+
+    require "../vendor/autoload.php";  // Ensure Composer's autoload is included
+    use WebSocket\Client;
 
     $orderID = $_POST['orderID'];
     $itemID = (int)$_POST['itemID']; 
@@ -94,6 +97,9 @@ include('../assets/connection/sqlconnection.php');
             $date,
             $_SESSION['user']
         ]);
+
+        $client = new Client("ws://192.168.42.222:8081");
+        $client->send(json_encode(["action" => "refreshImissUpdate"]));
         
     } catch (PDOException $e) {
         echo json_encode(["error" => $e->getMessage()]);

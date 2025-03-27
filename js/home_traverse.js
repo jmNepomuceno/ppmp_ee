@@ -44,15 +44,21 @@ $(document).ready(function(){
     });
 
     $('#logout-btn').click(function(){
-        $.ajax({
-            url: '../php/logout.php',
-            method: "GET",
-            
-            success: function(response) {
-                window.location.href = response;
-            }
-        });
+        modal_logout.show()
+        
+
+        $(document).off('click', '#yes-modal-btn-logout').on('click', '#yes-modal-btn-logout', function() {
+            $.ajax({
+                url: '../php/logout.php',
+                method: "GET",
+                
+                success: function(response) {
+                    window.location.href = response;
+                }
+            });
+        })
     });
+    
 
     $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {
         if($('#burger-icon').css('color') != 'rgb(255, 85, 33)'){

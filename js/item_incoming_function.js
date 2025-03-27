@@ -10,7 +10,6 @@ const dataTable = () =>{
             },
             dataType : "json",
             success: function(response) {
-                console.log(response)
 
                 try {
                     let dataSet = [];
@@ -34,7 +33,6 @@ const dataTable = () =>{
                         ]);
                     }
 
-                    console.log(dataSet);
 
                     if ($.fn.DataTable.isDataTable('#cart-table')) {
                         $('#cart-table').DataTable().destroy();
@@ -127,16 +125,20 @@ $(document).ready(function(){
     });
 
     $('#logout-btn').click(function(){
-        $.ajax({
-            url: '../php/logout.php',
-            method: "GET",
-            
-            success: function(response) {
-                window.location.href = response;
-            }
-        });
-    });
+        modal_logout.show()
+        
 
+        $(document).off('click', '#yes-modal-btn-logout').on('click', '#yes-modal-btn-logout', function() {
+            $.ajax({
+                url: '../php/logout.php',
+                method: "GET",
+                
+                success: function(response) {
+                    window.location.href = response;
+                }
+            });
+        })
+    });
 
     // $(document).off('click', '#close-modal-btn-incoming').on('click', '#close-modal-btn-incoming', function() {        
     //     dataTable("Pending")

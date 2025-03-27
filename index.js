@@ -6,8 +6,6 @@ $(document).ready(function(){
         const username_input = $('#username-txt').val();
         const password_input = $('#password-txt').val();
 
-        console.log(username_input, password_input);
-
         $.ajax({
             url: '../php/login.php',
             method: "POST",

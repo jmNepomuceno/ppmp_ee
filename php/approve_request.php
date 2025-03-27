@@ -2,6 +2,9 @@
 include ('../session.php');
 include('../assets/connection/sqlconnection.php');
 
+require "../vendor/autoload.php";  // Ensure Composer's autoload is included
+use WebSocket\Client;
+
 $date = date('Y-m-d H:i:s');
 
 $quarterly = '{"Q1": 0, "Jan": 0, "Feb": 0, "Mar": 0, "Q2": 0, "Apr": 0, "May": 0, "June": 0, "Q3": 0, "July": 0, "Aug": 0, "Sept": 0, "Q4": 0, "Oct": 0, "Nov": 0,"Dec": 0}';
@@ -71,6 +74,9 @@ try {
         $data[$i]['order_by_name'] = $data_name['fullName'];
         $data[$i]['order_by_sectionName'] = $data_section['sectionName'];
     }
+
+    $client = new Client("ws://192.168.42.222:8081");
+    $client->send(json_encode(["action" => "refreshImissUpdate"]));
 
     echo json_encode($data);
 } catch (PDOException $e) {

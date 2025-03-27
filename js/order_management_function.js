@@ -20,7 +20,6 @@ const dataTable = (filter) =>{
             },
             dataType : "json",
             success: function(response) {
-                console.log(response)
                 try {
                     let dataSet = [];
                     
@@ -46,7 +45,6 @@ const dataTable = (filter) =>{
                         history_update_response[i] = response[i].history_update
                         remarks_arr.push(response[i].order_remarks)
                     }  
-                    console.log(dataSet)
 
                     if ($.fn.DataTable.isDataTable('#cart-table')) {
                         $('#cart-table').DataTable().destroy();
@@ -93,7 +91,6 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
         },
         dataType : 'JSON',
         success: function(response) {
-            console.log(response)
             
             if(response != false){
                 let order_status = ""
@@ -132,7 +129,6 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
                         `<input class='item-quantity-span' type='number' value='${item.itemQuantity}' />`,
                         `<span class="item-subtotal-span">${formattedPrice}</span>`
                     ];
-                    console.log(response.order_status)
                     
                     if (response.order_status === "Pending") {
                         order_status = "Pending"
@@ -164,7 +160,6 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
                     "<span style='visibility:hidden;'>asdf</span> ",
                 ]);
 
-                console.log(dataSet)
 
 
                 let table_column = [
@@ -222,12 +217,8 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
 }
 
 const dataTable_viewUpdate = (orderID, sectionName , history_update, remarks) =>{
-    console.log(history_update)
-    console.log(remarks_arr)
     let dataSet = []
     for(let i = 0; i < history_update.length; i++){
-        console.log(history_update[i].updatedOrder)
-        console.log(history_update[i].previousOrder)
         
         let differences = [];
         let updatedMap = new Map(history_update[i].updatedOrder.map(item => [String(item.itemID), item]));
@@ -278,7 +269,6 @@ const dataTable_viewUpdate = (orderID, sectionName , history_update, remarks) =>
             }
         });
 
-        console.log("differences: ", differences)
 
         if ($.fn.DataTable.isDataTable('#cart-table-update')) {
             let table = $('#cart-table-update').DataTable();
@@ -345,6 +335,13 @@ const dataTable_viewUpdate = (orderID, sectionName , history_update, remarks) =>
     $('#remark-textarea').val((remarks) ? remarks : "No Remarks")
 }
 
+document.addEventListener("websocketMessage", function(event) {
+    let data = event.detail;
+
+    if (data.action === "refreshImissUpdate") {
+        dataTable("Pending")
+    }
+});
 
 
 $(document).ready(function(){
@@ -355,21 +352,25 @@ $(document).ready(function(){
     });
 
     $('#logout-btn').click(function(){
-        $.ajax({
-            url: '../php/logout.php',
-            method: "GET",
-            
-            success: function(response) {
-                window.location.href = response;
-            }
-        });
+        modal_logout.show()
+        
+
+        $(document).off('click', '#yes-modal-btn-logout').on('click', '#yes-modal-btn-logout', function() {
+            $.ajax({
+                url: '../php/logout.php',
+                method: "GET",
+                
+                success: function(response) {
+                    window.location.href = response;
+                }
+            });
+        })
     });
 
     $(document).off('click', '.view-request-span').on('click', '.view-request-span', function() {      
         const index = $('.view-request-span').index(this);
         const orderID = $('.view-request-span').eq(index).attr('id')
         const sectionName = $('.request-section-span').eq(index).attr('id')
-        console.log(sectionName)
         incoming_orderID_clicked = orderID
         modal_viewRequest.show(
             dataTable_viewRequest(orderID, sectionName)
@@ -389,8 +390,6 @@ $(document).ready(function(){
 
     // approve-request-btn
     $(document).off('click', '#approve-request-btn').on('click', '#approve-request-btn', function() {    
-        console.log(selectedRequest_data)
-        console.log(selectedRequest_data)
         // try {
         //     $.ajax({
         //         url: '../php/approve_request.php',

@@ -11,7 +11,6 @@ const dataTable = () => {
             method: "GET",
             dataType: "json",
             success: function (response) {
-                console.log(response);
                 const filteredData = response.filteredData
                 const rawData = response.rawData
                 const sectionData = response.section
@@ -270,9 +269,6 @@ $(document).ready(function(){
 
     $(document).off('click', '.save-quantity-draft').on('click', '.save-quantity-draft', function() {      
         const index = $('.save-quantity-draft').index(this);
-        console.log(index)
-        console.log(orderInformation[index])
-        console.log($('.item-quantity-draft').eq(index).val())
 
         // function
         // ppmp request
@@ -290,7 +286,6 @@ $(document).ready(function(){
                 // dataType : 'json',
                 success: function(response) {
                     try { 
-                        console.log(response)
                         dataTable()
 
                         $('#modal-notif .modal-content .modal-header .modal-title-incoming').text("Successfully Edited")
@@ -316,6 +311,22 @@ $(document).ready(function(){
             $('body .left-container').css('display', 'flex');
             $('#burger-icon').css('color', 'white');
         }
+    });
+
+    $('#logout-btn').click(function(){
+        modal_logout.show()
+        
+
+        $(document).off('click', '#yes-modal-btn-logout').on('click', '#yes-modal-btn-logout', function() {
+            $.ajax({
+                url: '../php/logout.php',
+                method: "GET",
+                
+                success: function(response) {
+                    window.location.href = response;
+                }
+            });
+        })
     });
 });
 

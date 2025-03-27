@@ -10,7 +10,6 @@ const dataTable = () =>{
         method: "POST",
         dataType : 'JSON',
         success: function(response) {
-            console.log(response)
 
             // Truncate long product names
             for (let i = 0; i < response.cart.length; i++) {
@@ -62,7 +61,6 @@ const dataTable = () =>{
                 ""
             ]);
 
-            console.log(dataSet)
             $('#cart-table').DataTable({
                 data: dataSet,
                 columns: [
@@ -91,13 +89,13 @@ const dataTable = () =>{
         }
     });
 }
+
 const checkCurrentCart = () =>{
     $.ajax({
         url: '../php/checkCurrentCart.php',
         method: "POST",
         dataType : 'JSON',
         success: function(response) {
-            console.log(response)
             let total_current_addCart = 0
             for(let i = 0; i < response.cart.length; i++){
                 total_current_addCart += parseInt(response.cart[i].itemQuantity)
@@ -217,7 +215,6 @@ $(document).ready(function(){
 
     // $(document).off('change', '.current-total-span').on('change', '.current-total-span', function() {        
     $(document).on('input', '.current-total-span', function () {
-        console.log('Input event triggered');
     
         const index = $('.current-total-span').index(this);
         let value = parseInt($(this).val()) || 0; // Ensure it's a valid number, default to 0
@@ -306,14 +303,12 @@ $(document).ready(function(){
             'itemPrice': $('.item-price').eq(index).text(),
         })
 
-        console.log(data)
         $.ajax({
             url: '../php/addToCart.php',
             method: "POST",
             data: { data: JSON.stringify(data) },
             dataType : 'JSON', 
             success: function(response) {
-                console.log(response);
 
                 let total_current_addCart = 0
                 for(let i = 0; i < response.cart.length; i++){
@@ -368,7 +363,6 @@ $(document).ready(function(){
                     action : "update"
                 },
                 success: function(response) {
-                    console.log(response)
                     try {
                         dataTable()
                         checkCurrentCart()
@@ -394,7 +388,6 @@ $(document).ready(function(){
     $(document).off('click', '.remove-item-btn').on('click', '.remove-item-btn', function() {        
         const index = $('.remove-item-btn').index(this);
 
-        console.log(index)
         try {
             $.ajax({
                 url: '../php/updateCart.php',
@@ -407,7 +400,6 @@ $(document).ready(function(){
                 dataType: "JSON",
                 success: function(response) {
                     try {
-                        console.log(response)
                         if(response.length > 0){
                             dataTable()
                             checkCurrentCart()
