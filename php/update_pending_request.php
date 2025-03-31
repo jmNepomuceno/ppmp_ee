@@ -57,9 +57,9 @@
             // $stmt->execute([$orderID]);
             
             $todo = ($_POST['from'] == 'admin') ? 'Rejected' : 'Cancelled';
-            $sql = "UPDATE ppmp_request SET order_status=? WHERE orderID=?";
+            $sql = "UPDATE ppmp_request SET order_status=? , order_item=? WHERE orderID=?";
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$todo, $orderID]);
+            $stmt->execute([$todo,  json_encode($current_cart['order_item']), $orderID]);
         }else{
             $sql = "UPDATE ppmp_request SET order_item=? WHERE orderID=?";
             $stmt = $pdo->prepare($sql);
@@ -98,9 +98,30 @@
             $_SESSION['user']
         ]);
 
+        $sql = "SELECT order_item FROM ppmp_request WHERE orderID=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$orderID]);
+        $updated_cart = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($updated_cart && !empty($updated_cart['order_item'])) {
+            $decodedCart = json_decode($updated_cart['order_item'], true);
+    
+            // Ensure valid JSON decoding
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $updated_cart['order_item'] = $decodedCart;
+            } else {
+                $updated_cart['order_item'] = []; // Fallback to an empty array if decoding fails
+            }
+        } else {
+            $updated_cart = ["order_item" => []]; // Handle case where no data is found
+        }
+
+        echo json_encode($updated_cart, JSON_PRETTY_PRINT);
+
         $client = new Client("ws://192.168.42.222:8081");
-        $client->send(json_encode(["action" => "refreshImissUpdate"]));
-        
+        $client->send(json_encode(["action" => "refreshSideBar"]));
+
+       
     } catch (PDOException $e) {
         echo json_encode(["error" => $e->getMessage()]);
     }

@@ -4,7 +4,7 @@ let modal_notif = new bootstrap.Modal(document.getElementById('modal-notif'));
 let selectedRequest_data = {}
 let incoming_orderID_clicked = ""
 let orig_quantity_before_update_user = []
-
+let filter_type = "Pending"
 const dataTable = (filter) =>{
     try {
         $.ajax({
@@ -199,8 +199,13 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
                 }
             }
             
+            if(filter_type != "Pending"){
+                $('#approve-request-btn').css('display', 'none')
+            }
         }
     });
+
+
 }
 
 
@@ -287,6 +292,12 @@ $(document).ready(function(){
         }
     }) 
 
+
+    // close-modal-btn
+    $(document).off('click', '#close-modal-btn').on('click', '#close-modal-btn', function() {    
+        $('#approve-request-btn').css('display', 'block')
+    })
+
     $(document).off('change', '.item-quantity-span').on('change', '.item-quantity-span', function() {        
         const index = $('.item-quantity-span').index(this);
 
@@ -349,15 +360,22 @@ $(document).ready(function(){
                     action : "delete",
                     from : "admin"
                 },
-                // dataType : 'json',
+                dataType : 'json',
                 success: function(response) {
                     try { 
+                        console.log(response.order_item.length)
                         const orderID = incoming_orderID_clicked
                         const sectionName = $('.request-section-span').eq(index).attr('id')
+
                         dataTable_viewRequest(orderID, sectionName)
+                        dataTable("Pending")
 
                         $('#modal-notif .modal-content .modal-header .modal-title-incoming').text("Successfully Cancelled")
                         modal_notif.show()
+
+                        if(response.order_item.length === 0){
+                            $('#approve-request-btn').css('display', 'none')
+                        }
                     } catch (innerError) {
                         console.error("Error processing response:", innerError);
                     }
@@ -385,6 +403,7 @@ $(document).ready(function(){
         $('#pending-btn').css('opacity' , '1')
 
         dataTable("Pending")
+        filter_type = "Pending"
     });
 
     $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {      
@@ -397,6 +416,7 @@ $(document).ready(function(){
         $('#approved-btn').css('opacity' , '1')
 
         dataTable("Approved")
+        filter_type = "Approved"
     });
 
     $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {  
@@ -408,6 +428,7 @@ $(document).ready(function(){
         $('#rejected-btn').css('background' , '#ba3a13')
         $('#rejected-btn').css('opacity' , '1')      
         dataTable("Rejected")
+        filter_type = "Rejected"
     });
 
     $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {    
@@ -419,6 +440,7 @@ $(document).ready(function(){
         $('#cancelled-btn').css('background' , '#ba3a13')
         $('#cancelled-btn').css('opacity' , '1')    
         dataTable("Cancelled")
+        filter_type = "Cancelled"
     });
 
     $(document).off('click', '#all-btn').on('click', '#all-btn', function() {      
@@ -430,6 +452,7 @@ $(document).ready(function(){
         $('#all-btn').css('background' , '#ba3a13')
         $('#all-btn').css('opacity' , '1')      
         dataTable("All")
+        filter_type = "All"
     });
 
     $(document).off('click', '#burger-icon').on('click', '#burger-icon', function() {

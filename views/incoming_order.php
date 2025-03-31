@@ -8,8 +8,16 @@
             die("<h2>Access Denied</h2><p>You do not have permission to access this page.</p>");
         }
         header("Location: ../views/home.php");
-
     }
+
+
+    // $sql = "DELETE FROM ppmp_request WHERE orderID='ORDER00032'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
+
+    // $sql = "DELETE FROM request_history WHERE orderID='ORDER00031'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 ?>
 
 <!DOCTYPE html>
@@ -101,7 +109,7 @@
                     <textarea name="" id="remark-textarea" placeholder="Remarks/Comment"></textarea>
                 </div>
                 <div class="modal-footer">
-                    <button id="close-modal-btn-incoming" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
+                    <button id="close-modal-btn" type="button" type="button" data-bs-dismiss="modal">CLOSE</button>
                     <button id="approve-request-btn" type="button">APPROVE REQUEST</button>
                 </div>
             </div>

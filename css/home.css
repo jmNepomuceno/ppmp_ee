@@ -774,4 +774,15 @@ body .right-container .inventory-div .tiles-div .function-div .add-to-cart-btn{
         padding: 0 10px 0 10px;
         font-size: 0.9rem;
     }
+
+    body .left-container .user-acc-div img{
+        position:absolute;
+        width: 30px;
+        height: 30px;
+        right:5px;
+        bottom:30px;
+        color:white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
 }

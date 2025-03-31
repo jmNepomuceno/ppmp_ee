@@ -48,6 +48,8 @@
     ?>
 
     <div class="right-container">
+        
+
         <div class="function-bar">
             <i class="fa-solid fa-bars" id="burger-icon"></i>
             <div class="search-bar">

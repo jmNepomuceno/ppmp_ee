@@ -77,6 +77,7 @@ try {
 
     $client = new Client("ws://192.168.42.222:8081");
     $client->send(json_encode(["action" => "refreshImissUpdate"]));
+    $client->send(json_encode(["action" => "refreshSideBar"]));
 
     echo json_encode($data);
 } catch (PDOException $e) {
