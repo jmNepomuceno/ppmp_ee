@@ -33,6 +33,10 @@
 <i class="fa-solid fa-bars" id="burger-icon"></i>
 
     <div class="right-container">
+        <?php 
+            $navbar_view = "IMISS PPMP DRAFT";
+            include("./navbar.php");
+        ?>
         <h1>IMISS PPMP Draft</h1>
         <div class="table-div">
             <table id="cart-table" class="display">

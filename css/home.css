@@ -219,7 +219,7 @@ body .right-container{
 body .right-container .function-bar{
     width:100%;
     height: 40px;
-    margin-top:30px;
+    margin-top:70px;
 
     display:flex;
     flex-direction: row;
@@ -254,8 +254,6 @@ body .right-container .function-bar .search-bar input{
     border-right:none;
     outline: none;
 }
-
-
 
 body .right-container .function-bar .search-bar button{
     width: 7%;
@@ -349,7 +347,7 @@ body .right-container .function-bar .cart-div #item-img-animation{
 body .right-container .inventory-div{
     width: 90%;
     height: 80%;
-    margin-top: 40px;
+    margin-top: 10px;
 
     display:flex;
     flex-direction: row;

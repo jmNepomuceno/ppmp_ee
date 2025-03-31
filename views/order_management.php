@@ -28,6 +28,10 @@
     <i class="fa-solid fa-bars" id="burger-icon"></i>
 
     <div class="right-container">
+        <?php 
+            $navbar_view = "Request Status";
+            include("./navbar.php");
+        ?>
         <h1>Order Request Dashboard</h1>
         <div class="table-div">
             <div class="table-container">

@@ -48,7 +48,14 @@
     ?>
 
     <div class="right-container">
-        
+        <?php 
+            $navbar_view = "INVENTORY LIST";
+            include("./navbar.php");
+        ?>
+
+        <div id="sample-id">
+            
+        </div>
 
         <div class="function-bar">
             <i class="fa-solid fa-bars" id="burger-icon"></i>

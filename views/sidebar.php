@@ -72,7 +72,7 @@
             <div class="vl"></div>
             <span id="user-name-span"><?php echo $_SESSION["name"] ?></span>
             <!-- <i class="fa-solid fa-right-from-bracket" id="logout-btn"></i> -->
-            <img src="../source/home_css/logout.png" alt="log-out-btn" id="logout-btn" />
+            <!-- <img src="../source/home_css/logout.png" alt="log-out-btn" id="logout-btn" /> -->
         </div>
     </div>
 

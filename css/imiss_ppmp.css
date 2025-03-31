@@ -218,6 +218,7 @@ body .right-container{
     justify-content: center;
     align-items: center;
     gap:20px;
+    position:relative;   
 }
 
 body .right-container .table-div{

@@ -1,22 +1,13 @@
-const audio = new Audio('../source/sound/shopee.mp3'); // Load the notification sound
-let modal_logout = new bootstrap.Modal(document.getElementById('modal-logout'));
-let previousResponse = 0; // Store the previous count to prevent duplicate sounds
-
-const fetchIncomingOrder = () => {
+const fetchIncomingOrder_navBar = () => {
     $.ajax({
         url: '../php/fetch_incoming_order.php',
         method: "GET",
         success: function(response) {
             response = parseInt(response);
-
-            if (response > 0) {
-                $('#bell-notif').removeClass('hidden'); // Show bell notification
-                // audio.play();
-            } else {
-                $('#bell-notif').addClass('hidden'); // Hide bell notification
+            if(response >= 1){
+                $('#navbar-bell').css('opacity', '1');
+                $('#navbar-span-val').text(response); 
             }
-
-            previousResponse = response; // Update previous response count
         }
     });
 };
@@ -25,12 +16,12 @@ const fetchIncomingOrder = () => {
 // setInterval(fetchIncomingOrder, 300000);
 
 // Run immediately on page load
-fetchIncomingOrder();
+fetchIncomingOrder_navBar();
 
 document.addEventListener("websocketMessage", function(event) {
     let data = event.detail;
 
-    if (data.action === "refreshSideBar") {
-        fetchIncomingOrder()
+    if (data.action === "refreshNavbar") {
+        fetchIncomingOrder_navBar()
     }
 });

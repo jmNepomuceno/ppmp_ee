@@ -216,6 +216,9 @@ body .right-container{
     justify-content: center;
     align-items: center;
     gap:20px;
+
+    position:relative;   
+
 }
 
 body .right-container .table-div{
@@ -244,6 +247,7 @@ body .right-container .table-div .table-container #cart-table{
 body .right-container .table-div .table-container #cart-table thead tr{
     background: #ba3a13;
     width: 100%;
+    color:white;
 }
 
 body .right-container .table-div .table-container #cart-table thead tr th{

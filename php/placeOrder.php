@@ -63,6 +63,7 @@ try {
     $client = new Client("ws://192.168.42.222:8081");
     $client->send(json_encode(["action" => "refreshIncomingOrder"]));
     $client->send(json_encode(["action" => "refreshSideBar"]));
+    $client->send(json_encode(["action" => "refreshNavbar"]));
 
 } catch (PDOException $e) {
     echo json_encode(["error" => $e->getMessage()]);

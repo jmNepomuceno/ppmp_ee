@@ -19,7 +19,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <link rel="stylesheet" href="../css/item_distribution.css">
+    <link rel="stylesheet" href="../css/item_incoming.css">
     <?php require "../links/header_link.php" ?>
 </head>
 <body>
@@ -31,6 +31,10 @@
     <i class="fa-solid fa-bars" id="burger-icon"></i>
 
     <div class="right-container">
+        <?php 
+            $navbar_view = "INCOMING ITEM";
+            include("./navbar.php");
+        ?>
         <h1>PPMP Distribution</h1>
         <div class="table-div">
             <div class="table-container">

@@ -11,9 +11,9 @@
     }
 
 
-    // $sql = "DELETE FROM ppmp_request WHERE orderID='ORDER00032'";
+    // $sql = "UPDATE ppmp_request SET order_status=Pending WHERE orderID='ORDER00032'";
     // $stmt = $pdo->prepare($sql);
-    // $stmt->execute();
+    // $stmt->execute([$todo,  json_encode($current_cart['order_item']), $orderID]);
 
     // $sql = "DELETE FROM request_history WHERE orderID='ORDER00031'";
     // $stmt = $pdo->prepare($sql);
@@ -37,9 +37,12 @@
         include("./sidebar.php")
     ?>
 
-
     <i class="fa-solid fa-bars" id="burger-icon"></i>
     <div class="right-container">
+        <?php 
+            $navbar_view = "INCOMING ORDER";
+            include("./navbar.php");
+        ?>
         <h1>Incoming PPMP Request</h1>
         <div class="table-div">
             <div class="filter-div">

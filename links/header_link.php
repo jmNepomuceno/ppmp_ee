@@ -26,4 +26,6 @@
 
 <script src="../assets/websocket/script.js"></script>
 
+<link rel="stylesheet" href="../css/navbar.css">
+
 
