@@ -51,6 +51,18 @@ try {
         $_SESSION["section"],      
     ]);
 
+    $notifMessage = "Incoming request from {$_SESSION["sectionName"]}";
+    $sql = "INSERT INTO ppmp_notification (orderID, notifStatus, notifMessage, notifReceiver, isRead, created_at) VALUES (?,?,?,?,?,?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $orderID,
+        "incoming_request",
+        $notifMessage,
+        ($_SESSION["role"] === "user") ? 'admin' : 'user', // Check if the user is an admin
+        0,
+        $date
+    ]);
+
 
     // $sql = "DELETE cart FROM user_cart WHERE bioID=?";
     // $stmt = $pdo->prepare($sql);

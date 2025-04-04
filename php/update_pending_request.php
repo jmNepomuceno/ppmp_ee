@@ -118,6 +118,39 @@
 
         echo json_encode($updated_cart, JSON_PRETTY_PRINT);
 
+        // notification query
+        $sql = "SELECT order_date, order_by_section FROM ppmp_request WHERE orderID=?";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$orderID]);
+        $notif_order_date = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $notifMessage = "";
+        $notifStatus = "";
+        $date = $notif_order_date['order_date'];
+        $dateTime = new DateTime($date);
+        $notifDate = $dateTime->format("F j, Y"); // Format the date as "April 4, 2025"
+
+        if($action == 'update'){
+            $notifMessage = "Update your request on {$notifDate}";
+            $notifStatus = "updated";
+        }else{
+            $notifMessage = "Reject your request on {$notifDate}";
+            $notifStatus = "rejected";
+        }
+
+        $sql = "INSERT INTO ppmp_notification (orderID, notifStatus, notifMessage, notifReceiver, isRead, created_at) VALUES (?,?,?,?,?,?)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            $orderID,
+            $notifStatus,
+            $notifMessage,
+            $notif_order_date['order_by_section'],
+            0,
+            $date
+        ]);
+
+
+
         $client = new Client("ws://192.168.42.222:8081");
         $client->send(json_encode(["action" => "refreshSideBar"]));
 

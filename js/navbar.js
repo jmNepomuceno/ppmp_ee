@@ -1,13 +1,28 @@
 const fetchIncomingOrder_navBar = () => {
     $.ajax({
-        url: '../php/fetch_incoming_order.php',
+        url: '../php/fetch_incoming_notif.php',
         method: "GET",
+        dataType: "json",
         success: function(response) {
-            response = parseInt(response);
-            if(response >= 1){
+            // Inject HTML into container
+            $('.navbar-notif-div').html(response.html);
+    
+            // Access raw data
+            let data = response.data;
+            console.log("🔍 Raw notification data:", data);
+    
+            const notifCount = response.count;
+    
+            if (notifCount > 0) {
                 $('#navbar-bell').css('opacity', '1');
-                $('#navbar-span-val').text(response); 
+                $('#navbar-span-val').text(notifCount);
+            } else {
+                $('#navbar-bell').css('opacity', '0.5');
+                $('#navbar-span-val').text('');
             }
+        },
+        error: function(xhr, status, error) {
+            console.error("❌ Error fetching notifications:", error);
         }
     });
 };
@@ -25,3 +40,26 @@ document.addEventListener("websocketMessage", function(event) {
         fetchIncomingOrder_navBar()
     }
 });
+
+$(document).ready(function(){
+    $('#navbar-bell').click(function(){
+        if($('.navbar-notif-div').css('display') == 'flex'){
+            $('.navbar-notif-div').css('display', 'none');
+        }else{
+            $('.navbar-notif-div').css('display', 'flex');
+        }
+    });
+
+    $('.navbar-notif-row').click(function () {
+        let $row = $(this);
+    
+        $row.removeClass('unread').addClass('read');
+    
+        // Add temporary click feedback animation
+        $row.css({ transform: 'scale(0.97)' });
+    
+        setTimeout(() => {
+            $row.css({ transform: 'scale(1)' });
+        }, 150);
+    });
+})

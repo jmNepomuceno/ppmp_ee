@@ -305,7 +305,7 @@ body .right-container .function-bar .cart-div #notif-value{
     font-weight: 900;
 
     display:none;
-    z-index: 1000 !important;
+    z-index: 10 !important;
 }
 
 body .right-container .function-bar .cart-div #item-img-animation{
