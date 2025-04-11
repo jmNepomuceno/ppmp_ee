@@ -1,3 +1,4 @@
+let main_data = null;
 const fetchIncomingOrder_navBar = () => {
     $.ajax({
         url: '../php/fetch_incoming_notif.php',
@@ -8,8 +9,8 @@ const fetchIncomingOrder_navBar = () => {
             $('.navbar-notif-div').html(response.html);
     
             // Access raw data
-            let data = response.data;
-            console.log("🔍 Raw notification data:", data);
+            main_data = response.data;
+            console.log("🔍 Raw notification data:", main_data);
     
             const notifCount = response.count;
     
@@ -33,6 +34,7 @@ const fetchIncomingOrder_navBar = () => {
 // Run immediately on page load
 fetchIncomingOrder_navBar();
 
+
 document.addEventListener("websocketMessage", function(event) {
     let data = event.detail;
 
@@ -42,24 +44,68 @@ document.addEventListener("websocketMessage", function(event) {
 });
 
 $(document).ready(function(){
-    $('#navbar-bell').click(function(){
+    // $(document).off('click', '.update-item-btn').on('click', '.update-item-btn', function() {        
+
+    $(document).off('click', '#navbar-bell').on('click', '#navbar-bell', function() {  
         if($('.navbar-notif-div').css('display') == 'flex'){
             $('.navbar-notif-div').css('display', 'none');
         }else{
             $('.navbar-notif-div').css('display', 'flex');
         }
+
+        fetchIncomingOrder_navBar()
     });
 
-    $('.navbar-notif-row').click(function () {
+    $(document).off('click', '.navbar-notif-row').on('click', '.navbar-notif-row', function() {  
         let $row = $(this);
-    
+        let index = $row.index();
+        let rowData = main_data[index];
+
+        console.log(rowData) 
+
+
+        $.ajax({
+            url: '../php/update_notification.php',
+            method: "POST",
+            data : {notifID : rowData['notifID']},
+            success: function(response) {
+                if(rowData['notifReceiver'] === 'admin'){
+                    if(rowData['notifStatus'] === 'incoming_request'){
+                        window.location.href = "../views/incoming_order.php?status=" + rowData.notifStatus;
+                    }
+                    else if(rowData['notifStatus'] === 'updated'){
+                        window.location.href = "../views/incoming_order.php?status=" + rowData.notifStatus;
+                    }
+                    else if(rowData['notifStatus'] === 'cancelled'){
+                        window.location.href = "../views/incoming_order.php?status=" + rowData.notifStatus;
+                    }
+                }else{
+                    if(rowData['notifStatus'] === 'updated'){
+                        window.location.href = "../views/order_management.php?status=" + rowData.notifStatus;
+                    }
+                    if(rowData['notifStatus'] === 'rejected'){
+                        window.location.href = "../views/order_management.php?status=" + rowData.notifStatus;
+                    }
+                    if(rowData['notifStatus'] === 'approved'){
+                        window.location.href = "../views/order_management.php?status=" + rowData.notifStatus;
+                    }
+                }
+                
+                fetchIncomingOrder_navBar()
+            },
+            error: function(xhr, status, error) {
+                console.error("❌ Error fetching notifications:", error);
+            }
+        });
+
+        // styling block
+        
         $row.removeClass('unread').addClass('read');
-    
-        // Add temporary click feedback animation
         $row.css({ transform: 'scale(0.97)' });
-    
         setTimeout(() => {
             $row.css({ transform: 'scale(1)' });
         }, 150);
+
+        
     });
 })

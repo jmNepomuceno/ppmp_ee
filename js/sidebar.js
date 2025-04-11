@@ -34,3 +34,5 @@ document.addEventListener("websocketMessage", function(event) {
         fetchIncomingOrder()
     }
 });
+
+

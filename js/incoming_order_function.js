@@ -5,6 +5,7 @@ let selectedRequest_data = {}
 let incoming_orderID_clicked = ""
 let orig_quantity_before_update_user = []
 let filter_type = "Pending"
+
 const dataTable = (filter) =>{
     try {
         $.ajax({
@@ -208,6 +209,32 @@ const dataTable_viewRequest = (orderID, sectionName) =>{
 
 }
 
+const getQueryParam = (param) => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+const clearFilterStyleBtns = () => {
+    for(let i = 0; i < $('.filter-buttons').length; i++){
+        $('.filter-buttons').eq(i).css('background' , '#ba3a13')
+        $('.filter-buttons').eq(i).css('opacity' , '0.5')
+    }
+}
+
+const readNotifOnLoad = (type) => {
+    if(type == "Pending"){
+        $.ajax({
+            url: '../php/update_batch_notification.php',
+            method: "POST",
+            data : {type},
+            success: function(response) {
+                console.log('here')
+                fetchIncomingOrder_navBar()
+            }
+        });
+    }
+}
+
 
 // socket.onmessage = function(event) {
 //     let data = JSON.parse(event.data);
@@ -231,7 +258,37 @@ document.addEventListener("websocketMessage", function(event) {
 });
 
 $(document).ready(function(){
-    dataTable("Pending")
+    readNotifOnLoad("Pending")
+
+    const notifStatus = getQueryParam("status");
+    clearFilterStyleBtns()
+    switch(notifStatus) {
+        case "updated": 
+            dataTable("Pending"); 
+            $('#pending-btn').css('background' , '#ba3a13')
+            $('#pending-btn').css('opacity' , '1')    
+            break;
+        case "approved": 
+            dataTable("Approved"); 
+            ('#approved-btn').css('background' , '#ba3a13')
+            $('#approved-btn').css('opacity' , '1')    
+            break;
+        case "rejected": 
+            dataTable("Rejected"); 
+            $('#rejected-btn').css('background' , '#ba3a13')
+            $('#rejected-btn').css('opacity' , '1')    
+            break;
+        case "cancelled": 
+            dataTable("Cancelled"); 
+            $('#cancelled-btn').css('background' , '#ba3a13')
+            $('#cancelled-btn').css('opacity' , '1')    
+            break;
+        default : 
+            dataTable("Pending"); 
+            $('#pending-btn').css('background' , '#ba3a13')
+            $('#pending-btn').css('opacity' , '1')    
+            break;
+    }
 
     $('#inventory-list-sub-div').click(function(){
         window.location.href = "../views/home.php";
@@ -394,10 +451,7 @@ $(document).ready(function(){
     // });
 
     $(document).off('click', '#pending-btn').on('click', '#pending-btn', function() {
-        for(let i = 0; i < $('.filter-buttons').length; i++){
-            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
-            $('.filter-buttons').eq(i).css('opacity' , '0.5')
-        }
+        clearFilterStyleBtns()
 
         $('#pending-btn').css('background' , '#ba3a13')
         $('#pending-btn').css('opacity' , '1')
@@ -407,10 +461,7 @@ $(document).ready(function(){
     });
 
     $(document).off('click', '#approved-btn').on('click', '#approved-btn', function() {      
-        for(let i = 0; i < $('.filter-buttons').length; i++){
-            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
-            $('.filter-buttons').eq(i).css('opacity' , '0.5')
-        }
+        clearFilterStyleBtns()
 
         $('#approved-btn').css('background' , '#ba3a13')
         $('#approved-btn').css('opacity' , '1')
@@ -420,10 +471,7 @@ $(document).ready(function(){
     });
 
     $(document).off('click', '#rejected-btn').on('click', '#rejected-btn', function() {  
-        for(let i = 0; i < $('.filter-buttons').length; i++){
-            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
-            $('.filter-buttons').eq(i).css('opacity' , '0.5')
-        }
+        clearFilterStyleBtns()
 
         $('#rejected-btn').css('background' , '#ba3a13')
         $('#rejected-btn').css('opacity' , '1')      
@@ -432,10 +480,7 @@ $(document).ready(function(){
     });
 
     $(document).off('click', '#cancelled-btn').on('click', '#cancelled-btn', function() {    
-        for(let i = 0; i < $('.filter-buttons').length; i++){
-            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
-            $('.filter-buttons').eq(i).css('opacity' , '0.5')
-        }
+        clearFilterStyleBtns()
 
         $('#cancelled-btn').css('background' , '#ba3a13')
         $('#cancelled-btn').css('opacity' , '1')    
@@ -444,10 +489,7 @@ $(document).ready(function(){
     });
 
     $(document).off('click', '#all-btn').on('click', '#all-btn', function() {      
-        for(let i = 0; i < $('.filter-buttons').length; i++){
-            $('.filter-buttons').eq(i).css('background' , '#ba3a13')
-            $('.filter-buttons').eq(i).css('opacity' , '0.5')
-        }
+        clearFilterStyleBtns()
 
         $('#all-btn').css('background' , '#ba3a13')
         $('#all-btn').css('opacity' , '1')      

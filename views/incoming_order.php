@@ -13,11 +13,29 @@
 
     // $sql = "UPDATE ppmp_request SET order_status=Pending WHERE orderID='ORDER00032'";
     // $stmt = $pdo->prepare($sql);
-    // $stmt->execute([$todo,  json_encode($current_cart['order_item']), $orderID]);
+    // // $stmt->execute([$todo,  json_encode($current_cart['order_item']), $orderID]);
 
-    // $sql = "DELETE FROM request_history WHERE orderID='ORDER00031'";
+    $sql = "DELETE FROM request_history WHERE orderID='ORDER00037'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $sql = "DELETE FROM ppmp_request WHERE orderID='ORDER00037'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    $sql = "DELETE FROM ppmp_notification WHERE orderID='ORDER00037'";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+
+    // $sql = "UPDATE ppmp_notification SET isRead=0 WHERE orderID='ORDER00036'";
     // $stmt = $pdo->prepare($sql);
     // $stmt->execute();
+
+    $sql = "SELECT * FROM ppmp_notification WHERE notifReceiver='admin' ORDER BY isRead ASC, created_at DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    $admin_notif = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // echo '<pre>'; print_r($admin_notif); echo '</pre>';
 ?>
 
 <!DOCTYPE html>

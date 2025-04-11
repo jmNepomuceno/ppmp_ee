@@ -10,7 +10,8 @@
     $itemQuantity = $_POST['itemQuantity']; 
     $action = $_POST['action'];
     $date = date('Y-m-d H:i:s');
-
+    $current_date = date('Y-m-d H:i:s');
+    $todo = "";
     try {
         $sql = "SELECT order_item FROM ppmp_request WHERE orderID=?";
         $stmt = $pdo->prepare($sql);
@@ -126,35 +127,53 @@
 
         $notifMessage = "";
         $notifStatus = "";
+        $notifReceiver = "";
         $date = $notif_order_date['order_date'];
         $dateTime = new DateTime($date);
         $notifDate = $dateTime->format("F j, Y"); // Format the date as "April 4, 2025"
 
-        if($action == 'update'){
-            $notifMessage = "Update your request on {$notifDate}";
+        if ($action == 'update') {
             $notifStatus = "updated";
-        }else{
-            $notifMessage = "Reject your request on {$notifDate}";
-            $notifStatus = "rejected";
+            $notifMessage = ($_POST['from'] == 'admin')
+                ? "Admin updates your request on {$notifDate}"
+                : "{$_SESSION['sectionName']} updated their request on {$notifDate}";
+        } else {
+            if ($todo == 'Rejected') {
+                $notifStatus = "rejected";
+                $notifMessage = ($_POST['from'] == 'admin')
+                    ? "Admin rejects your request on {$notifDate}"
+                    : "{$_SESSION['sectionName']} Rejected their request on {$notifDate}";
+            } else {
+                $notifStatus = "cancelled";
+                $notifMessage = ($_POST['from'] == 'admin')
+                    ? "Admin cancels your request on {$notifDate}"
+                    : "{$_SESSION['sectionName']} Cancelled their request on {$notifDate}";
+            }
         }
-
+        
+        if($_POST['from'] == 'admin'){
+            $notifReceiver = $notif_order_date['order_by_section'];
+        }
+        else{
+            $notifReceiver = 'admin';
+        }
         $sql = "INSERT INTO ppmp_notification (orderID, notifStatus, notifMessage, notifReceiver, isRead, created_at) VALUES (?,?,?,?,?,?)";
         $stmt = $pdo->prepare($sql);
         $stmt->execute([
             $orderID,
             $notifStatus,
             $notifMessage,
-            $notif_order_date['order_by_section'],
+            $notifReceiver,
             0,
-            $date
+            $current_date
         ]);
 
 
-
         $client = new Client("ws://192.168.42.222:8081");
-        $client->send(json_encode(["action" => "refreshSideBar"]));
+        $client->send(json_encode(["action" => "refreshSideBar"]));    
+        $client->send(json_encode(["action" => "refreshIncomingOrder"]));    
+        $client->send(json_encode(["action" => "refreshNavbar"]));    
 
-       
     } catch (PDOException $e) {
         echo json_encode(["error" => $e->getMessage()]);
     }

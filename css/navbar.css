@@ -97,67 +97,66 @@
 
     top:-10px;
     right:-10px;
-    font-size: 0.8rem;
-    background: red;
+    font-size: 0.75rem;
+    background: #8a2c0f;
     padding:3px 5px 3px 5px;
     border-radius: 50%;
 }
 
-.nav-div .navbar-function-icon .navbar-notif-div{
-    position:absolute;
-    top:40px ;
-    left:-175px;
+.nav-div .navbar-function-icon .navbar-notif-div {
+    position: absolute;
+    top: 40px;
+    left: -175px;
     width: 350px;
     height: 500px;
     z-index: 200 !important;
     background: #f2f2f2;
     border-radius: 5px;
     padding: 15px;
-    display:flex;
+    display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    gap:10px;
+    gap: 10px;
 
-    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, 
+                rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+    overflow-y: auto; /* scroll works better here */
 }
 
-.nav-div .navbar-function-icon .navbar-notif-div .unread{
+.nav-div .navbar-function-icon .navbar-notif-div .unread,
+.nav-div .navbar-function-icon .navbar-notif-div .read {
     width: 100%;
-    height: 70px;
+    height: 70px !important;
+    max-height: 70px !important;
+    background: gray; /* default */
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+
+    flex-shrink: 0; /* ⬅️ prevents shrinking when overflow occurs */
+}
+
+.nav-div .navbar-function-icon .navbar-notif-div .unread {
     background: #e95b2f;
-    border-radius: 5px;
-    display:flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap:15px;
 }
 
-.nav-div .navbar-function-icon .navbar-notif-div .read{
-    width: 100%;
-    height: 70px;
-    background: gray;
-    border-radius: 5px;
-    display:flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap:15px;
-}
 
-.navbar-notif-row {
+.nav-div .navbar-function-icon .navbar-notif-div .navbar-notif-row {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .navbar-notif-row.unread {
-    background-color: #e95b2f; /* unread background */
+    background-color: #e95b2f; 
 }
 
 .navbar-notif-row.read {
-    background-color: #f1f1f1; /* read background */
-    transform: scale(0.98); /* subtle click feedback */
-    opacity: 0.8;
+    background-color: #f1f1f1; 
+    transform: scale(0.98); 
+    opacity: 0.55;
 }
 
 /* .nav-div .navbar-function-icon .navbar-notif-div .navbar-notif-row{
@@ -193,7 +192,6 @@
     align-items: center;
 
     /* border:1px solid yellow; */
-
 }
 
 .nav-div .navbar-function-icon .navbar-notif-div .navbar-notif-row .navbar-notif-main-container span{

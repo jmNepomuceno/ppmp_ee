@@ -25,8 +25,6 @@
 
         <img src="../source/home_css/logout.png" alt="log-out-btn" id="logout-btn" />
     </div>
-
-    
 </div>
 
 <script src="../js/navbar.js?v=<?php echo time(); ?>"></script>
