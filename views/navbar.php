@@ -23,6 +23,7 @@
             </div>
         </div>
 
+        <!-- <div class="navbar-pagination"></div> -->
         <img src="../source/home_css/logout.png" alt="log-out-btn" id="logout-btn" />
     </div>
 </div>

@@ -5,6 +5,7 @@ let selectedRequest_data = {}
 let incoming_orderID_clicked = ""
 let orig_quantity_before_update_user = []
 let filter_type = "Pending"
+const notifID_session = sessionStorage.getItem("highlightOrderID");
 
 const dataTable = (filter) =>{
     try {
@@ -16,6 +17,7 @@ const dataTable = (filter) =>{
             },
             dataType : "json",
             success: function(response) {
+                console.log(response)
                 try {
                     let dataSet = [];
 
@@ -69,6 +71,28 @@ const dataTable = (filter) =>{
                         // "stripeClasses": [],
                         // "search": false
                     });
+
+                    // notification highlighter
+                    setTimeout(() => {
+                        if (notifID_session) {
+                            // Find the matching row and highlight it
+                            $('#cart-table tbody tr').each(function() {
+                                const rowText = $(this).find('.view-request-span').attr('id'); // get orderID in the row
+                                if (rowText === notifID_session) {
+                                    $(this).css({
+                                        backgroundColor: '#ffeaa7',
+                                        transition: 'background-color 0.5s ease'
+                                    });
+                                    // Optionally scroll into view
+                                    this.scrollIntoView({ behavior: "smooth", block: "center" });
+                                }
+                            });
+                    
+                            // Clear it after use
+                            sessionStorage.removeItem("highlightOrderID");
+                        }
+                    }, 300); // Delay to ensure table is fully rendered
+                    
 
                 } catch (innerError) {
                     console.error("Error processing response:", innerError);
@@ -228,7 +252,6 @@ const readNotifOnLoad = (type) => {
             method: "POST",
             data : {type},
             success: function(response) {
-                console.log('here')
                 fetchIncomingOrder_navBar()
             }
         });

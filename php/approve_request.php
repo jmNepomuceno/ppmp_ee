@@ -75,9 +75,26 @@ try {
         $data[$i]['order_by_sectionName'] = $data_section['sectionName'];
     }
 
+    $sql = "SELECT order_by_section FROM ppmp_request WHERE orderID=?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$orderID]);
+    $order_ID_notification = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $sql = "INSERT INTO ppmp_notification (orderID, notifStatus, notifMessage, notifReceiver, isRead, created_at) VALUES (?,?,?,?,?,?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        $orderID,
+        "approved",
+        "Admin approves your request on {$date}",
+        $order_ID_notification['order_by_section'],
+        0,
+        $date
+    ]);
+
     $client = new Client("ws://192.168.42.222:8081");
     $client->send(json_encode(["action" => "refreshImissUpdate"]));
     $client->send(json_encode(["action" => "refreshSideBar"]));
+    $client->send(json_encode(["action" => "refreshNavbar"]));    
 
     echo json_encode($data);
 } catch (PDOException $e) {

@@ -15,17 +15,17 @@
     // $stmt = $pdo->prepare($sql);
     // // $stmt->execute([$todo,  json_encode($current_cart['order_item']), $orderID]);
 
-    $sql = "DELETE FROM request_history WHERE orderID='ORDER00037'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    // $sql = "DELETE FROM request_history WHERE orderID='ORDER00038'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
-    $sql = "DELETE FROM ppmp_request WHERE orderID='ORDER00037'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    // $sql = "DELETE FROM ppmp_request WHERE orderID='ORDER00038'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
-    $sql = "DELETE FROM ppmp_notification WHERE orderID='ORDER00037'";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
+    // $sql = "DELETE FROM ppmp_notification WHERE orderID='ORDER00038'";
+    // $stmt = $pdo->prepare($sql);
+    // $stmt->execute();
 
     // $sql = "UPDATE ppmp_notification SET isRead=0 WHERE orderID='ORDER00036'";
     // $stmt = $pdo->prepare($sql);

@@ -1,4 +1,5 @@
 let main_data = null;
+
 const fetchIncomingOrder_navBar = () => {
     $.ajax({
         url: '../php/fetch_incoming_notif.php',
@@ -60,52 +61,42 @@ $(document).ready(function(){
         let $row = $(this);
         let index = $row.index();
         let rowData = main_data[index];
-
-        console.log(rowData) 
-
-
+    
+        console.log(rowData);
+    
+        // Store orderID in sessionStorage
+        sessionStorage.setItem("highlightOrderID", rowData.orderID);
+    
         $.ajax({
             url: '../php/update_notification.php',
             method: "POST",
             data : {notifID : rowData['notifID']},
             success: function(response) {
                 if(rowData['notifReceiver'] === 'admin'){
-                    if(rowData['notifStatus'] === 'incoming_request'){
+                    if(rowData['notifStatus'] === 'incoming_request' || 
+                       rowData['notifStatus'] === 'updated' || 
+                       rowData['notifStatus'] === 'cancelled'){
                         window.location.href = "../views/incoming_order.php?status=" + rowData.notifStatus;
                     }
-                    else if(rowData['notifStatus'] === 'updated'){
-                        window.location.href = "../views/incoming_order.php?status=" + rowData.notifStatus;
-                    }
-                    else if(rowData['notifStatus'] === 'cancelled'){
-                        window.location.href = "../views/incoming_order.php?status=" + rowData.notifStatus;
-                    }
-                }else{
-                    if(rowData['notifStatus'] === 'updated'){
-                        window.location.href = "../views/order_management.php?status=" + rowData.notifStatus;
-                    }
-                    if(rowData['notifStatus'] === 'rejected'){
-                        window.location.href = "../views/order_management.php?status=" + rowData.notifStatus;
-                    }
-                    if(rowData['notifStatus'] === 'approved'){
+                } else {
+                    if(['updated', 'rejected', 'approved', 'cancelled'].includes(rowData['notifStatus'])){
                         window.location.href = "../views/order_management.php?status=" + rowData.notifStatus;
                     }
                 }
-                
-                fetchIncomingOrder_navBar()
+    
+                fetchIncomingOrder_navBar();
             },
             error: function(xhr, status, error) {
                 console.error("❌ Error fetching notifications:", error);
             }
         });
-
-        // styling block
-        
+    
+        // Styling effect
         $row.removeClass('unread').addClass('read');
         $row.css({ transform: 'scale(0.97)' });
         setTimeout(() => {
             $row.css({ transform: 'scale(1)' });
         }, 150);
-
-        
     });
+    
 })

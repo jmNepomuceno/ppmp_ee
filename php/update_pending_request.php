@@ -138,17 +138,26 @@
                 ? "Admin updates your request on {$notifDate}"
                 : "{$_SESSION['sectionName']} updated their request on {$notifDate}";
         } else {
-            if ($todo == 'Rejected') {
-                $notifStatus = "rejected";
+            if($current_cart['order_item'] == null){
+                if ($todo == 'Rejected') {
+                    $notifStatus = "rejected";
+                    $notifMessage = ($_POST['from'] == 'admin')
+                        ? "Admin rejects your request on {$notifDate}"
+                        : "{$_SESSION['sectionName']} Rejected their request on {$notifDate}";
+                } else {
+                    $notifStatus = "cancelled";
+                    $notifMessage = ($_POST['from'] == 'admin')
+                        ? "Admin cancels your request on {$notifDate}"
+                        : "{$_SESSION['sectionName']} Cancelled their request on {$notifDate}";
+                }    
+            }else{
+                $notifStatus = "updated";
                 $notifMessage = ($_POST['from'] == 'admin')
-                    ? "Admin rejects your request on {$notifDate}"
-                    : "{$_SESSION['sectionName']} Rejected their request on {$notifDate}";
-            } else {
-                $notifStatus = "cancelled";
-                $notifMessage = ($_POST['from'] == 'admin')
-                    ? "Admin cancels your request on {$notifDate}"
-                    : "{$_SESSION['sectionName']} Cancelled their request on {$notifDate}";
+                    ? "Admin updates your request on {$notifDate}"
+                    : "{$_SESSION['sectionName']} updated their request on {$notifDate}";
             }
+
+           
         }
         
         if($_POST['from'] == 'admin'){

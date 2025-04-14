@@ -113,7 +113,7 @@
     background: #f2f2f2;
     border-radius: 5px;
     padding: 15px;
-    display: flex;
+    display: none;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
@@ -123,6 +123,25 @@
                 rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
     overflow-y: auto; /* scroll works better here */
 }
+
+
+/* .nav-div .navbar-function-icon .navbar-notif-div .navbar-pagination .pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    font-size: 0.85rem;
+    background: #f0f0f0;
+}
+
+.nav-div .navbar-function-icon .navbar-notif-div .navbar-pagination .pagination-controls button {
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.nav-div .navbar-function-icon .navbar-notif-div .navbar-pagination .pagination-controls button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+} */
 
 .nav-div .navbar-function-icon .navbar-notif-div .unread,
 .nav-div .navbar-function-icon .navbar-notif-div .read {
@@ -159,12 +178,7 @@
     opacity: 0.55;
 }
 
-/* .nav-div .navbar-function-icon .navbar-notif-div .navbar-notif-row{
-    background: #f1f1f1; 
-    color: #666; 
-    font-weight: normal;
-    opacity: 0.8; 
-} */
+
 
 .nav-div .navbar-function-icon .navbar-notif-div .navbar-notif-row:hover{
     opacity: 1;

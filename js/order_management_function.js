@@ -10,6 +10,9 @@ let history_update_response = {}
 let orig_quantity_before_update_user = []
 let remarks_arr = []
 
+const notifID_session = sessionStorage.getItem("highlightOrderID");
+console.log(notifID_session)
+
 const dataTable = (filter) =>{
     try {
         $.ajax({
@@ -67,6 +70,28 @@ const dataTable = (filter) =>{
                         // "stripeClasses": [],
                         // "search": false
                     });
+
+                     // notification highlighter
+                     setTimeout(() => {
+                        if (notifID_session) {
+                            // Find the matching row and highlight it
+                            $('#cart-table tbody tr').each(function() {
+                                const rowText = $(this).find('.view-request-span').attr('id'); // get orderID in the row
+                                console.log(rowText , notifID_session)
+                                if (rowText === notifID_session) {
+                                    $(this).css({
+                                        backgroundColor: '#ffeaa7',
+                                        transition: 'background-color 0.5s ease'
+                                    });
+                                    // Optionally scroll into view
+                                    this.scrollIntoView({ behavior: "smooth", block: "center" });
+                                }
+                            });
+                    
+                            // Clear it after use
+                            sessionStorage.removeItem("highlightOrderID");
+                        }
+                    }, 300); // Delay to ensure table is fully rendered
 
                 } catch (innerError) {
                     console.error("Error processing response:", innerError);
@@ -359,7 +384,6 @@ document.addEventListener("websocketMessage", function(event) {
 $(document).ready(function(){
     const notifStatus = getQueryParam("status");
     clearFilterStyleBtns()
-
     switch(notifStatus) {
         case "updated": 
             dataTable("Pending"); 
@@ -368,7 +392,7 @@ $(document).ready(function(){
             break;
         case "approved": 
             dataTable("Approved"); 
-            ('#approved-btn').css('background' , '#ba3a13')
+            $('#approved-btn').css('background' , '#ba3a13')
             $('#approved-btn').css('opacity' , '1')    
             break;
         case "rejected": 
